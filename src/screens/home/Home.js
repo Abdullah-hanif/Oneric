@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Button, ScrollView, Text } from 'react-native';
-import { Image, ImageBackground, Keyboard, StyleSheet, View ,TouchableOpacity} from 'react-native';
+import { Image, ImageBackground, Keyboard, StyleSheet, View, TouchableOpacity } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
 import FullScreenModal from '../../components/FullScreenModal';
 
@@ -8,7 +8,7 @@ const Home = ({ navigation }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const toggleModal = () => {
-      setIsModalVisible(!isModalVisible);
+        setIsModalVisible(!isModalVisible);
     };
     return (
 
@@ -31,14 +31,14 @@ const Home = ({ navigation }) => {
                     />
                     <View style={{ marginTop: 220 }}>
                         <Text style={{ fontSize: 25, alignSelf: 'center' }}> Pending</Text>
-                        <Button title='move' />
+                        <Button title='move' onPress={() => navigation.navigate('Contest')} />
                         <TouchableOpacity style={styles.openButton} onPress={toggleModal}>
-        <Text style={styles.openButtonText}>Open Modal</Text>
-      </TouchableOpacity>
+                            <Text style={styles.openButtonText}>Open Modal</Text>
+                        </TouchableOpacity>
 
-      <FullScreenModal isVisible={isModalVisible} onClose={toggleModal} content={
-        <Image source={require('../../assets/Images/GiftImage.png')} style={{width:300,height:450}}/>
-      } />
+                        <FullScreenModal isVisible={isModalVisible} onClose={toggleModal} content={
+                            <Image source={require('../../assets/Images/GiftImage.png')} style={{ width: 300, height: 450 }} />
+                        } />
                     </View>
                 </ScrollView>
             </View>
