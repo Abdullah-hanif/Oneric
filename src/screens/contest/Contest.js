@@ -100,7 +100,7 @@ const Contest = ({ navigation }) => {
             <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'flex-end', left: 10 }}>
                 <Image source={require('../../assets/Images/TopRightBackground.png')} />
             </View>
-            <View style={{ alignItems: 'center', position: 'absolute', flexDirection: 'column', justifyContent: 'flex-end', marginTop: '180%', width: '100%', flex:1, zIndex: 999 }}>
+            <View style={{ alignItems: 'center', position: 'absolute', flexDirection: 'column', justifyContent: 'flex-end', marginTop: '165%', width: '100%', flex:1, zIndex: 999 }}>
                 <TouchableOpacity style={styles.buttonForAbsoulute} onPress={()=>navigation.navigate('LeagueSetting')}>
                     <Text style={{ color: '#fff', letterSpacing: 3, fontWeight: '400', fontSize: 12 }}>PREVIEW</Text>
                 </TouchableOpacity>

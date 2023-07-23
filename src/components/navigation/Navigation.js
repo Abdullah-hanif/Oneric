@@ -1,7 +1,7 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import * as React from 'react';
-import { Contest, DetailsVerify, Home, LeagueSetting, Login, OtpVerification, Splash } from '../../screens/Index';
+import { Contest, CreateTeam, DetailsVerify, Home, LeagueSetting, Login, OtpVerification, Splash, TeamOne, TeamTwo, Wallet } from '../../screens/Index';
 import FullScreenModalProfile from '../../screenComponents/FullScreenModalProfile';
 import GlobalHeader from '../GlobalHeader';
 
@@ -20,6 +20,10 @@ const Navigation = () => {
                 <Stack.Screen name="Contest" component={Contest} />
                 <Stack.Screen name="LeagueSetting" component={LeagueSetting} />
                 <Stack.Screen name="DetailsVerify" component={DetailsVerify} />
+                <Stack.Screen name="Wallet" component={Wallet} />
+                <Stack.Screen name="TeamOne" component={TeamOne} />
+                <Stack.Screen name="TeamTwo" component={TeamTwo} />
+                <Stack.Screen name="CreateTeam" component={CreateTeam} />
 
                 {/* @screen Components */}
                 <Stack.Screen name="FullScreenModalProfile" component={FullScreenModalProfile} />

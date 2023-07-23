@@ -1,8 +1,10 @@
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Modal } from 'react-native'
+import { useNavigation } from '@react-navigation/native'
 
 const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
+  const nav = useNavigation();
   return (
     // <Image source={require('../assets/Iocns/BackIconWhite.png')}/>
     <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={onClose}>
@@ -58,7 +60,12 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>8. Contact Us</Text>
             <Image source={require('../assets/Iocns/ContactIs.png')} />
           </TouchableOpacity>
+          <TouchableOpacity onPress={() => nav.navigate('Wallet')} style={{ flexDirection: 'row', borderRadius: 25, width: '95%', height: 48, backgroundColor: 'red', justifyContent: 'space-between', alignSelf: 'center', marginTop: 60, padding: 10 }}>
+            <Text style={{ fontWeight: '200', fontSize: 20, color: '#FFFFFF', left: 5 }}>Sign Out</Text>
+            <Image source={require('../assets/Iocns/SignOut.png')} style={{ width: 26, height: 24, right: 5 }} />
+          </TouchableOpacity>
         </View>
+
       </ScrollView>
     </Modal>
   )

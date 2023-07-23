@@ -5,6 +5,10 @@ import Splash from "./splash/Splash";
 import Contest from "./contest/Contest";
 import LeagueSetting from "./leagueSetting/LeagueSetting";
 import DetailsVerify from "./detailsVerify/DetailsVerify";
+import Wallet from "./wallet/Wallet";
+import TeamOne from "./teamOne/TeamOne";
+import TeamTwo from "./teamTwo/TeamTwo";
+import CreateTeam from "./createTeam/CreateTeam";
 export{
     Login,
     OtpVerification,
@@ -12,5 +16,9 @@ export{
     Splash,
     Contest,
     LeagueSetting,
-    DetailsVerify
+    DetailsVerify,
+    Wallet,
+    TeamOne,
+    TeamTwo,
+    CreateTeam
 }
