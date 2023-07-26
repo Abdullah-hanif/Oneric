@@ -9,7 +9,11 @@ import Wallet from "./wallet/Wallet";
 import TeamOne from "./teamOne/TeamOne";
 import TeamTwo from "./teamTwo/TeamTwo";
 import CreateTeam from "./createTeam/CreateTeam";
-export{
+import JoinContest from "./joinContest/JoinContest";
+import UpCommingMatches from "./upCommingMatches/UpCommingMatches";
+import ProfileSetupOne from "./profileSetup/ProfileSetupOne";
+import ProfileSetupTwo from "./profileSetupTwo/ProfileSetupTwo";
+export {
     Login,
     OtpVerification,
     Home,
@@ -20,5 +24,9 @@ export{
     Wallet,
     TeamOne,
     TeamTwo,
-    CreateTeam
+    CreateTeam,
+    JoinContest,
+    UpCommingMatches,
+    ProfileSetupOne,
+    ProfileSetupTwo
 }

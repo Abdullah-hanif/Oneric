@@ -53,7 +53,7 @@ const LeagueSetting = ({ navigation }) => {
                             marginTop: 10
                         }}
                     />
-                    <ScrollView
+                    <ScrollView 
                         horizontal
                         contentContainerStyle={styles.scrollViewContent}
                         showsHorizontalScrollIndicator={false}

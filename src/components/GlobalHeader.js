@@ -22,11 +22,7 @@ const GlobalHeader = ({
 }) => {
 
     const navigation = useNavigation();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-
-    const toggleModal = () => {
-      setIsModalVisible(!isModalVisible);
-    };
+    
     return (
         <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',padding:8,margin:8}}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -47,15 +43,13 @@ const GlobalHeader = ({
                     <Image source={sourceRSRightIcon} style={styleRRIMG ? styleRRIMG : {width:65,height:70}} />
                     </TouchableOpacity>
                     :
-                    <TouchableOpacity onPress={toggleModal}>
+                    <TouchableOpacity onPress={()=>navigation.navigate('ProfileSetupOne')}>
                     <Image source={require('../assets/Images/ProfileImage.png')} style={styleRRIMG ? styleRRIMG : {width:65,height:70}} />
                     </TouchableOpacity>}
                   
                 </View>
             </View>
-            <FullScreenModalProfile isVisible={isModalVisible} onClose={toggleModal}
-             
-            />
+          
         </View>
     )
 }
