@@ -34,7 +34,7 @@ const Splash = ({ navigation }) => {
                     <TouchableOpacity onPress={()=>(navigation.navigate('Login'))} style={{elevation:4,position:'absolute',flexDirection:'column',top:'80%',backgroundColor:'#353535',width:310,height:58,alignSelf:'center',alignItems:'center',borderRadius:35,zIndex:9999,justifyContent:'center'}}>
                         <Text style={{fontSize:20,fontWeight:'700',color:'#fff'}}>Get Started</Text>
                     </TouchableOpacity>
-                <Image source={require('../../assets/Images/OnericLogo.png')} style={{alignSelf:'center',width:183,height:178,marginTop:'10%'}}/>
+                <Image source={require('../../assets/Images/splash.png')} style={{alignSelf:'center',width:243,height:185,marginTop:'10%',right:6}}/>
                <View style={{alignSelf:'center',justifyContent:'center',alignItems:'center'}}>
                 <Text style={{fontSize:48,fontWeight:"200"}}>Let's Get</Text>
                 <Text style={{fontSize:48,fontWeight:"700",color:'#FF0F0F'}}>Started</Text>
@@ -43,7 +43,7 @@ const Splash = ({ navigation }) => {
                 <Text style={{fontSize:16,fontWeight:"400",color:'black',textAlign:'center'}}>Enjoy the best radio stations from your home, don't miss out on anything</Text>
                 </View>
                 <View>
-                    <Image source={require('../../assets/Images/FootballerImage.png')} style={{height:340,width:400}}/>
+                    <Image source={require('../../assets/Images/FootballerImage.png')} style={{resizeMode:'contain',height:340,width:400}}/>
                 </View>
                 </View>
 

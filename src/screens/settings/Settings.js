@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
 
-const ProfileSetupTwo = ({ navigation }) => {
+const Settings = ({ navigation }) => {
     const [selectedValue, setSelectedValue] = useState(null);
     const [showDropdown, setShowDropdown] = useState(false);
 
@@ -18,6 +18,22 @@ const ProfileSetupTwo = ({ navigation }) => {
         setShowDropdown(false);
     };
 
+
+    const RadioButton = ({ label, selected, onPress }) => {
+        return (
+            <TouchableOpacity style={styles.radioButtonContainer} onPress={onPress}>
+                <View style={[styles.radioButton, selected && styles.radioButtonSelected]}>
+                    {selected && <View style={styles.radioButtonInner} />}
+                </View>
+                <Text style={styles.label}>{label}</Text>
+            </TouchableOpacity>
+        );
+    };
+    const [selectedOption, setSelectedOption] = useState('Option 1');
+
+    const handleOptionChange = (option) => {
+        setSelectedOption(option);
+    };
     return (
         <ImageBackground source={require('../../assets/Images/BgImageLite.png')} style={{ flex: 1 }}>
             <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'flex-end', left: 10 }}>
@@ -33,9 +49,10 @@ const ProfileSetupTwo = ({ navigation }) => {
                     sourceLeftOnPress={() => navigation.goBack()}
                 />
                 <View style={{ marginTop: 5, padding: 5, margin: 5, }}>
-                    <View style={{ flexDirection: 'column', left: 10 }}>
-                        <Text style={{ fontWeight: '700', fontSize: 32 }}>KYC Details</Text>
-                        <Text style={{ fontWeight: '400', fontSize: 12 }}>Enter Your KYC Details...</Text>
+                    <View style={{ flexDirection: 'row', left: 10, alignItems: 'center' }}>
+                        <Text style={{ fontWeight: '700', fontSize: 30, justifyContent: 'center' }}>Settings</Text>
+                        <Image source={require('../../assets/Iocns/Settings.png')} style={{ left: 10, top: 5 }} />
+
                     </View>
                     <View
                         style={{
@@ -47,11 +64,27 @@ const ProfileSetupTwo = ({ navigation }) => {
 
 
                     <View style={{ margin: 5, padding: 5 }}>
+
+                        <View style={{ marginTop: 20, elevation: 5 }}>
+                            <Text style={{ fontWeight: '400', fontSize: 16, color: '#1D1E22' }}>Enter your name</Text>
+                            <View style={{ marginTop: 10, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', height: 53, backgroundColor: '#1D1E22', borderRadius: 46 }}>
+                                <TextInput maxLength={11} keyboardType='twitter' placeholder='User Name' placeholderTextColor={'white'} style={{ height: '100%', width: '100%', paddingLeft: 15, fontWeight: '400', fontSize: 16, color: '#FFFFFF' }} />
+                                <Image source={require('../../assets/Iocns/UserInput.png')} style={{ right: 40, width: 16, height: 16 }} />
+                            </View>
+                        </View>
+                        <View style={{ marginTop: 20, elevation: 5 }}>
+                            <Text style={{ fontWeight: '400', fontSize: 16, color: '#1D1E22' }}>Enter your mobile number</Text>
+                            <View style={{ marginTop: 10, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', height: 53, backgroundColor: '#1D1E22', borderRadius: 46 }}>
+                                <TextInput maxLength={11} keyboardType='numeric' placeholder='Mobile Number' placeholderTextColor={'white'} style={{ height: '100%', width: '100%', paddingLeft: 15, fontWeight: '400', fontSize: 16, color: '#FFFFFF' }} />
+                                {/* <Image source={require('../../assets/Iocns/UserInput.png')} style={{ right: 40, width: 16, height: 16 }} /> */}
+                            </View>
+                        </View>
+
+                        <View style={{ marginTop: 20, elevation: 5 }}>
+
                         <Text style={{ fontWeight: '400', fontSize: 16 }}>Set your date of birth</Text>
-
-
                         {/* datess */}
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
                             <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', width: 92, height: 53, borderRadius: 46, backgroundColor: '#1D1E22' }}>
                                 <Text style={{ fontWeight: '400', fontSize: 16, color: '#FFFFFF' }}>DD</Text>
                                 <Image source={require('../../assets/Iocns/DownIcon.png')} style={{ width: 11, height: 6 }} />
@@ -65,6 +98,7 @@ const ProfileSetupTwo = ({ navigation }) => {
                                 <Image source={require('../../assets/Iocns/DownIcon.png')} style={{ width: 11, height: 6 }} />
                             </TouchableOpacity>
                         </View>
+                        </View>
                         {/* datess */}
 
 
@@ -75,16 +109,38 @@ const ProfileSetupTwo = ({ navigation }) => {
                                 <Image source={require('../../assets/Iocns/DownIcon.png')} style={{ width: 11, height: 6, right: 20 }} />
                             </TouchableOpacity>
                             <View style={{ marginTop: 20, elevation: 5 }}>
-                                <Text style={{ fontWeight: '400', fontSize: 16, color: '#1D1E22' }}>Enter your Aadhaar Number (12 Digits)</Text>
+                                <Text style={{ fontWeight: '400', fontSize: 16, color: '#1D1E22' }}>Enter your email adress</Text>
                                 <View style={{ marginTop: 10, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', width: '100%', height: 53, backgroundColor: '#1D1E22', borderRadius: 46 }}>
-                                    <TextInput maxLength={11} keyboardType='numeric' placeholder='Enter Aadhaar Number...' placeholderTextColor={'white'} style={{ height: '100%', width: '100%', paddingLeft: 15, fontWeight: '400', fontSize: 16, color: '#FFFFFF' }} />
+                                    <TextInput maxLength={11} keyboardType='email-address' placeholder='Email adress...' placeholderTextColor={'white'} style={{ height: '100%', width: '100%', paddingLeft: 15, fontWeight: '400', fontSize: 16, color: '#FFFFFF' }} />
                                     <Image source={require('../../assets/Iocns/UserInput.png')} style={{ right: 40, width: 16, height: 16 }} />
                                 </View>
                             </View>
                         </View>
+
+                        <View style={{ marginTop: 20, elevation: 5 }}>
+                            <Text style={{ fontWeight: '400', fontSize: 16, color: '#1D1E22' }}>Select gender</Text>
+                            <View style={{ alignSelf:'center',width:'95%',marginTop: 10, alignItems: 'center', justifyContent: 'space-between', flexDirection: 'row', }}>
+                                <RadioButton
+                                    label="Male"
+                                    selected={selectedOption === 'Option 1'}
+                                    onPress={() => handleOptionChange('Option 1')}
+                                />
+                                <RadioButton
+                                    label="Female"
+                                    selected={selectedOption === 'Option 2'}
+                                    onPress={() => handleOptionChange('Option 2')}
+                                />
+                                <RadioButton
+                                    label="Others"
+                                    selected={selectedOption === 'Option 3'}
+                                    onPress={() => handleOptionChange('Option 3')}
+                                />
+                            </View>
+                        </View>
+
                         <TouchableOpacity onPress={() => navigation.navigate('ProfileSetupTwo')} style={{ marginTop: '10%', padding: 10, alignItems: 'center', flexDirection: 'row', width: 199, height: 45, backgroundColor: '#FF0F0F', borderRadius: 53 }}>
-                            <Image source={require('../../assets/Iocns/RightArrow.png')} style={{ width: 26, height: 19 }} />
-                            <Text style={{ fontWeight: '400', fontSize: 16, color: '#FFFFFF', left: 10, letterSpacing: 5 }}>CONTINUE</Text>
+
+                            <Text style={{ fontWeight: '400', fontSize: 16, color: '#FFFFFF', left: 10, letterSpacing: 5 }}>SAVE IT!</Text>
 
                         </TouchableOpacity>
                         <View style={{ marginTop: '10%' }}>
@@ -106,7 +162,7 @@ const ProfileSetupTwo = ({ navigation }) => {
         </ImageBackground>
     )
 }
-export default ProfileSetupTwo
+export default Settings
     ;
 
 const styles = StyleSheet.create({
@@ -153,6 +209,34 @@ const styles = StyleSheet.create({
     },
     dropdownText: {
         color: '#FFFFFF',
+        fontSize: 16,
+    },
+
+    radioButtonContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 10,
+    },
+    radioButton: {
+        width: 20,
+        height: 20,
+        borderRadius: 10,
+        borderWidth: 2,
+        borderColor: '#000',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginRight: 10,
+    },
+    radioButtonSelected: {
+        borderColor: '#5AC73D',
+    },
+    radioButtonInner: {
+        width: 12,
+        height: 12,
+        borderRadius: 6,
+        backgroundColor: '#FF0F0F',
+    },
+    label: {
         fontSize: 16,
     },
 

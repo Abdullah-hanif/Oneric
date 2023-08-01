@@ -31,7 +31,7 @@ const Login = ({ navigation }) => {
                 </View>
                 {/* for logo */}
                 <View style={{ padding: 10, margin: 10, marginTop: 100 }}>
-                    <Image source={require('../../assets/Images/OnericLogo.png')} />
+                    <Image source={require('../../assets/Images/OnericLogo.png')} style={{resizeMode:'contain'}} />
 
                     {/* for main content */}
 

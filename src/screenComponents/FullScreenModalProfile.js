@@ -28,7 +28,7 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
           }}
         />
         <View style={{ padding: 10, margin: 10, height: '100%' }}>
-          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={()=> nav.navigate('Settings')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>1. Settings</Text>
             <Image source={require('../assets/Iocns/Settings.png')} />
           </TouchableOpacity>
@@ -40,11 +40,15 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>3. Recent Earning</Text>
             <Image source={require('../assets/Iocns/RecentEarn.png')} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={()=> nav.navigate('TermsAndConditions')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>4. Terms & Conditions</Text>
             <Image source={require('../assets/Iocns/TermAndCond.png')} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={()=> nav.navigate('PrivacyAndPolicy')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+            <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>4. Privacy & Policy</Text>
+            <Image source={require('../assets/Iocns/TermAndCond.png')} />
+          </TouchableOpacity>
+          <TouchableOpacity onPress={()=> nav.navigate('PointSystem')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>5. Point System</Text>
             <Image source={require('../assets/Iocns/PointSystem.png')} />
           </TouchableOpacity>
@@ -52,7 +56,7 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>6. Refer to Earn</Text>
             <Image source={require('../assets/Iocns/RefAndEarn.png')} style={{ height: 15, width: 15 }} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={()=>nav.navigate('ResponsiblePlay')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>7. Responsible Play</Text>
             <Image source={require('../assets/Iocns/GreenBat.png')} />
           </TouchableOpacity>

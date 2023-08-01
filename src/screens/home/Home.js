@@ -1,10 +1,11 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, Dimensions, ScrollView, Text } from 'react-native';
-import { Image, ImageBackground, Keyboard, StyleSheet, View, TouchableOpacity } from 'react-native';
-import GlobalHeader from '../../components/GlobalHeader';
+import React, { useRef, useState } from 'react';
+import { Dimensions, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FullScreenModal from '../../components/FullScreenModal';
-import FullScreenModalProfile from '../../screenComponents/FullScreenModalProfile';
+import GlobalHeader from '../../components/GlobalHeader';
 import HorizontalTopList from '../../components/HorizontalTopList';
+import FullScreenModalProfile from '../../screenComponents/FullScreenModalProfile';
+import FutureMatchesCard from '../../screenComponents/FutureMatchesCard';
+import UpCommingMatchesCard from '../../screenComponents/UpCommingMatchesCard';
 
 const data = [
     { id: '1', title: 'League', titleImage: { activeImg: require('../../assets/Iocns/BatImgActive.png'), nonActiveImg: require('../../assets/Iocns/BatImg.png') } },
@@ -35,6 +36,24 @@ const Home = ({ navigation }) => {
         { id: 3, title: 'circket', image: require('../../assets/Images/BannerImage.png') },
         // Add more banner items as needed
     ];
+    const dataUpCommingMatches = [
+        { id: '1', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '2', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '3', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '4', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '5', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '6', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '7', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        { id: '8', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
+        // Add more items here if needed
+    ];
+    const dataFutureMatches = [
+        { id: '1', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
+        { id: '2', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
+        { id: '3', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
+        { id: '4', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
+        // Add more items here if needed
+    ];
 
     const handleSlideChange = (event) => {
         const slideWidth = event.nativeEvent.layoutMeasurement.width;
@@ -43,11 +62,12 @@ const Home = ({ navigation }) => {
         setCurrentPage(pageIndex);
     };
 
+
     return (
 
         <ImageBackground source={require('../../assets/Images/BgImageLite.png')} style={{ flex: 1 }}>
             <View style={styles.main} >
-                
+
                 <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'flex-end', left: 10 }}>
                     <Image source={require('../../assets/Images/TopRightBackground.png')} />
                 </View>
@@ -67,8 +87,10 @@ const Home = ({ navigation }) => {
                     </View>
 
                     {/* Bnnanerrr */}
-                    <Image source={require('../../assets/Images/ranvijay.png')} style={{ position: 'absolute', zIndex: 999, flexDirection: 'row', alignSelf: 'flex-end', width: 160, height: 160, bottom: 20, top: '14%' }} />
-                    <View style={styles.container}>
+                    <View style={{ zIndex: 9999 }}>
+                        <Image source={require('../../assets/Images/ranvijay.png')} style={{ resizeMode: 'contain', position: 'absolute', zIndex: 999, flexDirection: 'row', alignSelf: 'flex-end', width: 160, height: 160, bottom: 40, top: -35 }} />
+                    </View>
+                    <View style={styles.containerBanner}>
 
                         <ScrollView
                             ref={sliderRef}
@@ -99,7 +121,6 @@ const Home = ({ navigation }) => {
                     </View>
 
                     {/* bannerrrrr */}
-
                     <ScrollView
                         horizontal
                         contentContainerStyle={styles.scrollViewContent}
@@ -114,94 +135,27 @@ const Home = ({ navigation }) => {
                             <Text style={{ fontWeight: '400', fontSize: 14 }}>Featured <Text style={{ color: '#FF0F0F', fontWeight: '600' }}>Matches</Text></Text>
                             <Image source={require('../../assets/Iocns/signals.png')} style={{ left: 10, width: 16, height: 11 }} />
                         </View>
-                        <TouchableOpacity  onPress={() => navigation.navigate('Contest')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('Contest')}>
                             <Image source={require('../../assets/Iocns/RightSideArrow.png')} style={{ right: 20, width: 10, height: 16 }} />
                         </TouchableOpacity  >
                     </View>
 
                     <ScrollView horizontal scrollIndicatorInsets={false} style={{ padding: 1, margin: 1, marginTop: 10 }}>
-                        <View style={{ padding: 8, width: 236, height: 175, backgroundColor: '#012169', borderRadius: 8 }}>
-                            <View style={{ position: 'absolute', justifyContent: 'flex-end', alignSelf: 'flex-end', }}>
-                                <Image source={require('../../assets/Iocns/MegaSticker.png')} style={{ zIndex: 9999, position: 'relative', width: 48, height: 48 }} />
+                        {dataFutureMatches.map((item) => (
+                            <View style={{ margin: 5 }} key={item.id}>
+                                <FutureMatchesCard
+                                    MatchName={item?.matchName}
+                                    teamOne={item?.teamsOne}
+                                    teamTwo={item?.teamTwo}
+                                    teamOneFlag={item?.teamsDetails?.teamOneDeatils?.flagFirstTeam}
+                                    teamOneName={item?.teamsDetails?.teamOneDeatils?.teamsOneName}
+                                    teamTwoFlag={item?.teamsDetails?.teamTwoDeatils?.flagSecondTeam}
+                                    teamTwoName={item?.teamsDetails?.teamTwoDeatils?.teamsTwoName}
+                                    remainingTime={item.timeDuration?.totalTime}
+                                    totalAmount={item?.batPrice}
+                                />
                             </View>
-                            <Text style={{ color: '#FFFFFF', fontWeight: '400', fontSize: 14, }}>TNPL | <Text style={{ fontWeight: '700', fontSize: 14 }}>RR</Text> vs <Text style={{ fontWeight: '700', fontSize: 14 }}>CSK</Text></Text>
-                            <View style={{
-                                borderStyle: 'dotted',
-                                borderWidth: 1,
-                                borderRadius: 1,
-                                borderColor: '#FFFF',
-                                top: 5
-                            }}>
-                            </View>
-                            <View style={{ top: 10, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 10 }}>
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>ENG</Text>
-                                </View>
-                                <Image source={require('../../assets/Iocns/VSwhite.png')} />
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>AUS</Text>
-                                </View>
-
-                            </View>
-                            <View style={{ marginTop: 10, alignSelf: 'center', alignItems: 'center', bottom: 5 }}>
-                                <Image source={require('../../assets/Iocns/Timer.png')} style={{ width: 16, height: 16, }} />
-                                <Text style={{ color: '#FFFF', fontWeight: '400', fontSize: 12, top: 5 }}>4m 30s</Text>
-                            </View>
-                            <View
-                                style={{
-                                    borderBottomColor: '#FFFFFF',
-                                    borderBottomWidth: 1,
-                                    marginTop: 10
-                                }}
-                            />
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', top: '3%' }}>
-                                <Text style={{ fontWeight: '700', fontSize: 14, color: '#ffff', }}>₹ 7.06 lakhs</Text>
-                                <Image source={require('../../assets/Iocns/AlarmBell.png')} style={{ width: 15, height: 16, left: 55 }} />
-                            </View>
-                        </View>
-                        <View style={{ left: 10, padding: 8, width: 236, height: 175, backgroundColor: '#012169', borderRadius: 8 }}>
-                            <View style={{ position: 'absolute', justifyContent: 'flex-end', alignSelf: 'flex-end', }}>
-                                <Image source={require('../../assets/Iocns/MegaSticker.png')} style={{ zIndex: 9999, position: 'relative', width: 48, height: 48 }} />
-                            </View>
-                            <Text style={{ color: '#FFFFFF', fontWeight: '400', fontSize: 14, }}>TNPL | <Text style={{ fontWeight: '700', fontSize: 14 }}>RR</Text> vs <Text style={{ fontWeight: '700', fontSize: 14 }}>CSK</Text></Text>
-                            <View style={{
-                                borderStyle: 'dotted',
-                                borderWidth: 1,
-                                borderRadius: 1,
-                                borderColor: '#FFFF',
-                                top: 5
-                            }}>
-                            </View>
-                            <View style={{ top: 10, flexDirection: 'row', justifyContent: 'space-around', alignItems: 'center', marginTop: 10 }}>
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>ENG</Text>
-                                </View>
-                                <Image source={require('../../assets/Iocns/VSwhite.png')} />
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>AUS</Text>
-                                </View>
-
-                            </View>
-                            <View style={{ marginTop: 10, alignSelf: 'center', alignItems: 'center', bottom: 5 }}>
-                                <Image source={require('../../assets/Iocns/Timer.png')} style={{ width: 16, height: 16, }} />
-                                <Text style={{ color: '#FFFF', fontWeight: '400', fontSize: 12, top: 5 }}>4m 30s</Text>
-                            </View>
-                            <View
-                                style={{
-                                    borderBottomColor: '#FFFFFF',
-                                    borderBottomWidth: 1,
-                                    marginTop: 10
-                                }}
-                            />
-                            <View style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', top: '3%' }}>
-                                <Text style={{ fontWeight: '700', fontSize: 14, color: '#ffff', }}>₹ 7.06 lakhs</Text>
-                                <Image source={require('../../assets/Iocns/AlarmBell.png')} style={{ width: 15, height: 16, left: 55 }} />
-                            </View>
-                        </View>
+                        ))}
                     </ScrollView>
 
                     <View style={{ alignItems: 'center', left: 10, marginTop: '5%', flexDirection: 'row', justifyContent: 'space-between' }}>
@@ -209,77 +163,33 @@ const Home = ({ navigation }) => {
                             <Text style={{ fontWeight: '400', fontSize: 14 }}>Upcomming <Text style={{ color: '#FF0F0F', fontWeight: '600' }}>Matches</Text></Text>
                             <Image source={require('../../assets/Iocns/signals.png')} style={{ left: 10, width: 16, height: 11 }} />
                         </View>
-                        <TouchableOpacity onPress={()=>navigation.navigate('UpCommingMatches')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('UpCommingMatches')}>
                             <Image source={require('../../assets/Iocns/RightSideArrow.png')} style={{ right: 20, width: 10, height: 16 }} />
                         </TouchableOpacity  >
                     </View>
 
                     {/* cards upcommings*/}
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', marginTop: 20 }}>
-                        <View style={{ padding: 8, width: 173, height: 183, backgroundColor: '#1D1E22', borderRadius: 8 }}>
-                            <View style={{ position: 'absolute', justifyContent: 'flex-end', alignSelf: 'flex-end', }}>
-                                <Image source={require('../../assets/Iocns/MegaSticker.png')} style={{ position: 'relative', width: 48, height: 48 }} />
+                    <View style={styles.container}>
+                        {dataUpCommingMatches.slice(0, 6).map((item, index) => (
+                            <View key={item.id} style={index % 2 === 0 ? styles.leftColumn : styles.rightColumn}>
+                                <UpCommingMatchesCard
+                                    matchName={item?.matchName}
+                                    teamOne={item?.teamsOne}
+                                    teamTwo={item?.teamTwo}
+                                    flagFirstTeam={item?.teamsDetails?.teamOneDeatils?.flagFirstTeam}
+                                    teamsOneName={item?.teamsDetails?.teamOneDeatils?.teamsOneName}
+                                    flagSecondTeam={item?.teamsDetails?.teamTwoDeatils?.flagSecondTeam}
+                                    teamsTwoName={item?.teamsDetails?.teamTwoDeatils?.teamsTwoName}
+                                    hour={item?.timeDuration?.hour}
+                                    min={item?.timeDuration?.min}
+                                    batPrice={item?.batPrice}
+                                />
                             </View>
-                            <Text style={{ color: '#FFFFFF', fontWeight: '200', fontSize: 14, }}>The Ashes - 2023</Text>
-                            <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, }}>ENG vs AUS</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 10 }}>
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>ENG</Text>
-                                </View>
-                                <Image source={require('../../assets/Iocns/VSwhite.png')} />
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>AUS</Text>
-                                </View>
-
-                            </View>
-                            <View style={{ marginTop: 10 }}>
-                                <Text style={{ color: '#FF0F0F', fontWeight: '700', fontSize: 14 }}>20h <Text style={{ fontSize: 14, fontWeight: '400', color: '#FFFFFF' }}>19m</Text></Text>
-                            </View>
-                            <View
-                                style={{
-                                    borderBottomColor: '#FFFFFF',
-                                    borderBottomWidth: 1,
-                                    marginTop: 10
-                                }}
-                            />
-                            <Text style={{ fontWeight: '400', fontSize: 14, color: '#ffff', top: 5, textAlign: 'right', right: 5 }}>₹ 7.06 lakhs</Text>
-                        </View>
-                        <View style={{ padding: 8, width: 173, height: 183, backgroundColor: '#1D1E22', borderRadius: 8 }}>
-                            <View style={{ position: 'absolute', justifyContent: 'flex-end', alignSelf: 'flex-end', }}>
-                                <Image source={require('../../assets/Iocns/MegaSticker.png')} style={{ position: 'relative', width: 48, height: 48 }} />
-                            </View>
-                            <Text style={{ color: '#FFFFFF', fontWeight: '200', fontSize: 14, }}>The Ashes - 2023</Text>
-                            <Text style={{ color: '#FFFFFF', fontWeight: '700', fontSize: 14, }}>ENG vs AUS</Text>
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: 10 }}>
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>ENG</Text>
-                                </View>
-                                <Image source={require('../../assets/Iocns/VSwhite.png')} />
-                                <View style={{ justifyContent: 'center', alignItems: 'center' }}>
-                                    <Image source={require('../../assets/Images/AUSflag.png')} style={{ width: 32, height: 32 }} />
-                                    <Text style={{ fontWeight: '400', fontSize: 14, color: '#fff' }}>AUS</Text>
-                                </View>
-
-                            </View>
-                            <View style={{ marginTop: 10 }}>
-                                <Text style={{ color: '#FF0F0F', fontWeight: '700', fontSize: 14 }}>20h <Text style={{ fontSize: 14, fontWeight: '400', color: '#FFFFFF' }}>19m</Text></Text>
-                            </View>
-                            <View
-                                style={{
-                                    borderBottomColor: '#FFFFFF',
-                                    borderBottomWidth: 1,
-                                    marginTop: 10
-                                }}
-                            />
-                            <Text style={{ fontWeight: '400', fontSize: 14, color: '#ffff', top: 5, textAlign: 'right', right: 5 }}>₹ 7.06 lakhs</Text>
-                        </View>
+                        ))}
                     </View>
                     {/* cards upcommings*/}
 
-                    <View style={{ marginTop: 10,bottom:5 }}>
+                    <View style={{ marginTop: 10, bottom: 5 }}>
                         <TouchableOpacity style={styles.openButton} onPress={toggleModal}>
                             <Text style={styles.openButtonText}>Open Modal</Text>
                         </TouchableOpacity>
@@ -307,9 +217,9 @@ const styles = StyleSheet.create({
     scrollViewContent: {
         marginTop: '5%'
     },
-    container: {
+    containerBanner: {
         width: '95%',
-        marginTop: 20,
+        marginTop: 10,
         height: 108,
         overflow: 'hidden',
         borderRadius: 8,
@@ -318,19 +228,19 @@ const styles = StyleSheet.create({
     slideContainer: {
         width: windowWidth * 0.9,
         height: 200,
-
+        backgroundColor: '#F54E4F'
     },
     slideImage: {
         width: 448,
         height: 108,
-        resizeMode: 'cover',
+        resizeMode: 'cover'
     },
     dotsContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
         position: 'absolute',
-        bottom: 8,
+        bottom: 5,
         left: 10,
     },
     dot: {
@@ -338,7 +248,31 @@ const styles = StyleSheet.create({
         height: 8,
         borderRadius: 4,
         marginHorizontal: 4,
+        bottom: 5
     },
+    flatListContent: {
+        justifyContent: 'space-around',
+    },
+    column: {
+        margin: 5,
+        columnGap: 8,
 
-
+    },
+    container: {
+        flex: 1,
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        padding: 3,
+        margin: 3,
+        marginTop: 10
+    },
+    leftColumn: {
+        width: '42%',
+        marginBottom: 10,
+    },
+    rightColumn: {
+        width: '48%',
+        marginBottom: 10,
+    },
 })

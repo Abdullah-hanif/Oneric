@@ -156,18 +156,18 @@ const CreateTeam = ({ navigation }) => {
         <View style={{ marginTop: 5, padding: 5, margin: 5 }}>
           <View style={{ flexDirection: 'row', alignItems: 'center', left: 10, justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ fontWeight: '700', fontSize: 32 }}>Create Team</Text>
-              <View style={{ justifyContent: 'center', alignItems: 'center', width: 44, height: 44, backgroundColor: '#5AC73D', borderRadius: 100, bottom: 15, left: 5 }}>
+              <Text style={{ fontWeight: '700', fontSize: 27 }}>Create Team</Text>
+              <View style={{zIndex:999, justifyContent: 'center', alignItems: 'center', width: 44, height: 44, backgroundColor: '#5AC73D', borderRadius: 100, bottom: 15, left: 0 }}>
                 <Text style={{ fontWeight: '700', fontSize: 13, color: '#ffff' }}>0/11</Text>
               </View>
             </View>
 
-            <View style={{ flexDirection: 'row', gap: 5, right: 10 }}>
+            <View style={{ flexDirection: 'row', gap: 5, right: 15 ,alignItems:'center'}}>
               <View style={{ alignItems: 'center' }}>
                 <Image source={require('../../assets/Images/AUSflag.png')} />
                 <Text style={{ fontWeight: '700', fontSize: 11 }}>0/0</Text>
               </View>
-              <Image source={require('../../assets/Iocns/VS.png')} />
+              <Image source={require('../../assets/Iocns/VS.png')} style={{width:23,height:16}}/>
               <View style={{ alignItems: 'center' }}>
                 <Image source={require('../../assets/Images/ENGlflag.png')} style={{}} />
                 <Text style={{ fontWeight: '700', fontSize: 11 }}>0/0</Text>

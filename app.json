@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.abdullahhanif.Oneric"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "47b65243-38d6-417b-9bd5-817d34c55682"
+      }
     }
   }
 }

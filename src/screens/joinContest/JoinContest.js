@@ -37,7 +37,7 @@ const JoinContest = ({ navigation }) => {
                     zIndex: 999
                 }}
             >
-                <TouchableOpacity
+                <View
                     style={{
                         width: 316,
                         height: 40,
@@ -47,14 +47,22 @@ const JoinContest = ({ navigation }) => {
                         borderRadius: 53,
                         elevation: 5,
                         padding: 10,
-
+                        alignItems: 'center',
                     }}
                     onPress={toggleModal}
                 >
-                    <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 12, fontWeight: '400', letterSpacing: 5 }}>
-                        CREATE POOL / CREATE TEAM
-                    </Text>
-                </TouchableOpacity>
+                    <View style={{ justifyContent: 'center', flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                        <TouchableOpacity onPress={toggleModal} style={{ marginLeft: 15 }}>
+                            <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 12, fontWeight: '400', letterSpacing: 5 }}>CREATE POOL</Text>
+                        </TouchableOpacity>
+                        <View>
+                            <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 12, fontWeight: '400', letterSpacing: 5 }}>/</Text>
+                        </View>
+                        <TouchableOpacity onPress={()=>navigation.navigate('PrizePool')}>
+                            <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 12, fontWeight: '400', letterSpacing: 5 }}>CREATE TEAM </Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
             </View>
             <ScrollView style={styles.main} >
                 <GlobalHeader

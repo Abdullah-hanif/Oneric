@@ -13,6 +13,12 @@ import JoinContest from "./joinContest/JoinContest";
 import UpCommingMatches from "./upCommingMatches/UpCommingMatches";
 import ProfileSetupOne from "./profileSetup/ProfileSetupOne";
 import ProfileSetupTwo from "./profileSetupTwo/ProfileSetupTwo";
+import PrizePool from "./prizePool/PrizePool";
+import ResponsiblePlay from "./responsiblePlay/ResponsiblePlay";
+import Settings from "./settings/Settings";
+import TermsAndConditions from "./termsAndConditions/TermsAndConditions";
+import PrivacyAndPolicy from "./privacyAndPolicy/PrivacyAndPolicy";
+import PointSystem from "./pointSystem/PointSystem";
 export {
     Login,
     OtpVerification,
@@ -28,5 +34,11 @@ export {
     JoinContest,
     UpCommingMatches,
     ProfileSetupOne,
-    ProfileSetupTwo
+    ProfileSetupTwo,
+    PrizePool,
+    ResponsiblePlay,
+    Settings,
+    TermsAndConditions,
+    PrivacyAndPolicy,
+    PointSystem
 }
