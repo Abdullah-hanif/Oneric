@@ -62,7 +62,6 @@ const Home = ({ navigation }) => {
         setCurrentPage(pageIndex);
     };
 
-
     return (
 
         <ImageBackground source={require('../../assets/Images/BgImageLite.png')} style={{ flex: 1 }}>
