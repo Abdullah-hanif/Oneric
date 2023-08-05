@@ -24,16 +24,16 @@ const UsingExample = () => {
       )}
 
       {/* Buttons to trigger other CRUD operations */}
-      <Button title="Create" onPress={() => post('https://dummyjson.com/products', { /* Your data here */ })} />
+      <Button title="Create" onPress={() => post('products', { /* Your data here */ })} />
 
       {/* Button to trigger PUT request */}
-      <Button title="Update" onPress={() => put('https://dummyjson.com/products', 1, { /* Updated data here */ })} />
+      <Button title="Update" onPress={() => put('products', 1, { /* Updated data here */ })} />
 
       {/* Button to trigger DELETE request */}
-      <Button title="Delete" onPress={() => remove('https://dummyjson.com/products', 1)} />
+      <Button title="Delete" onPress={() => remove('products', 1)} />
 
       {/* Button to trigger GET request by ID */}
-      <Button title="Get by ID" onPress={() => getById('https://dummyjson.com/products', 1)} />
+      <Button title="Get by ID" onPress={() => getById('products', 1)} />
     </View>
   );
 };
