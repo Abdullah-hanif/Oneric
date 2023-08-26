@@ -1,24 +1,49 @@
-import React, { useState } from 'react';
-import { Image, ImageBackground, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { countryData } from '../../CountryData';
-import RedButton from '../../components/RedButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { Image, ImageBackground, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-const Splash = ({ navigation }) => {
-    const [selectedCountry, setSelectedCountry] = useState(countryData[0]);
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [isEnabled, setIsEnabled] = useState(false);
+const Splash = () => {
+    const navigation = useNavigation();
+    useEffect(() => {
+        checkSession();
+    }, []);
 
-    const onSelectCountry = (country) => {
-        setSelectedCountry(country);
+    const checkSession = async () => {
+        try {
+            const userData = await AsyncStorage.getItem('currrentUserData');
+            // console.log(userData, 'new object from async with updated token');
+            if (userData) {
+                const parsedObject = JSON.parse(userData);
+                console.log(parsedObject.data.token, 'parsed token from async');
+
+                // Fetch the new token from the API using fetch
+                const response = await fetch('https://oneric1.vercel.app/api/cricket/generateToken');
+                const responseData = await response.json(); // Get the data from the API response
+                // console.log(responseData?.data?.token, 'API response data')
+                if (responseData && responseData?.data?.token) {
+                    parsedObject.data.token = responseData?.data?.token;
+                    // console.log(responseData?.data?.token, 'new token from API');
+                    try {
+                        // Update AsyncStorage with the new token
+                        await AsyncStorage.setItem('currrentUserData', JSON.stringify(parsedObject));
+                        console.log('Token updated in AsyncStorage');
+
+                        // Continue with your navigation logic here
+                        navigation.navigate('Home');
+                    } catch (error) {
+                        console.error('Error updating token in AsyncStorage:', error);
+                    }
+                }
+            } else {
+                // User is not logged in or async storage not stored data, navigate to Login screen
+                navigation.navigate('Login');
+            }
+        } catch (error) {
+            console.error('Error checking session:', error);
+        }
     };
 
-    const onChangePhoneNumber = (number) => {
-        setPhoneNumber(number);
-    };
-
-    const toggleSwitch = () => {
-        setIsEnabled((previousState) => !previousState);
-    };
     return (
 
         <ImageBackground source={require('../../assets/Images/BgImage.png')} style={{ flex: 1 }}>
@@ -30,21 +55,21 @@ const Splash = ({ navigation }) => {
                     <Image source={require('../../assets/Images/SplashBottomRight.png')} />
                 </View>
                 {/* for logo */}
-                <View style={{alignSelf:'center'}}>
-                    <TouchableOpacity onPress={()=>(navigation.navigate('Login'))} style={{elevation:4,position:'absolute',flexDirection:'column',top:'80%',backgroundColor:'#353535',width:310,height:58,alignSelf:'center',alignItems:'center',borderRadius:35,zIndex:9999,justifyContent:'center'}}>
-                        <Text style={{fontSize:20,fontWeight:'700',color:'#fff'}}>Get Started</Text>
+                <View style={{ alignSelf: 'center' }}>
+                    <TouchableOpacity onPress={() => (navigation.navigate('Login'))} style={{ elevation: 4, position: 'absolute', flexDirection: 'column', top: '80%', backgroundColor: '#353535', width: 310, height: 58, alignSelf: 'center', alignItems: 'center', borderRadius: 35, zIndex: 9999, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 20, fontWeight: '700', color: '#fff' }}>Get Started</Text>
                     </TouchableOpacity>
-                <Image source={require('../../assets/Images/splash.png')} style={{alignSelf:'center',width:243,height:185,marginTop:'10%',right:6}}/>
-               <View style={{alignSelf:'center',justifyContent:'center',alignItems:'center'}}>
-                <Text style={{fontSize:48,fontWeight:"200"}}>Let's Get</Text>
-                <Text style={{fontSize:48,fontWeight:"700",color:'#FF0F0F'}}>Started</Text>
-                </View>
-                <View style={{width:'80%',alignSelf:'center',height:90}}>
-                <Text style={{fontSize:16,fontWeight:"400",color:'black',textAlign:'center'}}>Enjoy the best radio stations from your home, don't miss out on anything</Text>
-                </View>
-                <View>
-                    <Image source={require('../../assets/Images/FootballerImage.png')} style={{resizeMode:'contain',height:340,width:400}}/>
-                </View>
+                    <Image source={require('../../assets/Images/splash.png')} style={{ alignSelf: 'center', width: 243, height: 185, marginTop: '10%', right: 6 }} />
+                    <View style={{ alignSelf: 'center', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 48, fontWeight: "200" }}>Let's Get</Text>
+                        <Text style={{ fontSize: 48, fontWeight: "700", color: '#FF0F0F' }}>Started</Text>
+                    </View>
+                    <View style={{ width: '80%', alignSelf: 'center', height: 90 }}>
+                        <Text style={{ fontSize: 16, fontWeight: "400", color: 'black', textAlign: 'center' }}>Enjoy the best radio stations from your home, don't miss out on anything</Text>
+                    </View>
+                    <View>
+                        <Image source={require('../../assets/Images/FootballerImage.png')} style={{ resizeMode: 'contain', height: 340, width: 400 }} />
+                    </View>
                 </View>
 
             </View>

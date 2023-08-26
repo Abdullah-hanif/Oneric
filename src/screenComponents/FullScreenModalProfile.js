@@ -1,10 +1,29 @@
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import { Modal } from 'react-native'
-import { useNavigation } from '@react-navigation/native'
+import { CommonActions, useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
   const nav = useNavigation();
+  const handleLogout = async () => {
+    try {
+        // Remove user data from AsyncStorage
+        await AsyncStorage.removeItem('currrentUserData');
+        console.log('User data removed from AsyncStorage');
+        Alert.alert('Logged out successfully');
+
+        // Reset navigation stack and navigate to the Login screen
+        nav.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'Login' }],
+            })
+        );
+    } catch (error) {
+        console.error('Error logging out:', error);
+    }
+};
   return (
     // <Image source={require('../assets/Iocns/BackIconWhite.png')}/>
     <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={onClose}>
@@ -28,11 +47,11 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
           }}
         />
         <View style={{ padding: 10, margin: 10, height: '100%' }}>
-          <TouchableOpacity onPress={()=> nav.navigate('Settings')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={() => nav.navigate('Settings')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>1. Settings</Text>
             <Image source={require('../assets/Iocns/Settings.png')} />
           </TouchableOpacity>
-          <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={() => nav.navigate('Rewards')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>2. Wallet</Text>
             <Image source={require('../assets/Iocns/WalletGreen.png')} />
           </TouchableOpacity>
@@ -40,15 +59,15 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>3. Recent Earning</Text>
             <Image source={require('../assets/Iocns/RecentEarn.png')} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=> nav.navigate('TermsAndConditions')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={() => nav.navigate('TermsAndConditions')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>4. Terms & Conditions</Text>
             <Image source={require('../assets/Iocns/TermAndCond.png')} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=> nav.navigate('PrivacyAndPolicy')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={() => nav.navigate('PrivacyAndPolicy')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>4. Privacy & Policy</Text>
             <Image source={require('../assets/Iocns/TermAndCond.png')} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=> nav.navigate('PointSystem')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={() => nav.navigate('PointSystem')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>5. Point System</Text>
             <Image source={require('../assets/Iocns/PointSystem.png')} />
           </TouchableOpacity>
@@ -56,7 +75,7 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>6. Refer to Earn</Text>
             <Image source={require('../assets/Iocns/RefAndEarn.png')} style={{ height: 15, width: 15 }} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={()=>nav.navigate('ResponsiblePlay')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
+          <TouchableOpacity onPress={() => nav.navigate('ResponsiblePlay')} style={{ flexDirection: 'row', justifyContent: 'space-between', height: 40, width: '100%' }}>
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>7. Responsible Play</Text>
             <Image source={require('../assets/Iocns/GreenBat.png')} />
           </TouchableOpacity>
@@ -64,7 +83,7 @@ const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
             <Text style={{ color: '#fff', fontWeight: '400', fontSize: 16 }}>8. Contact Us</Text>
             <Image source={require('../assets/Iocns/ContactIs.png')} />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => nav.navigate('Wallet')} style={{ flexDirection: 'row', borderRadius: 25, width: '95%', height: 48, backgroundColor: 'red', justifyContent: 'space-between', alignSelf: 'center', marginTop: 60, padding: 10 }}>
+          <TouchableOpacity onPress={handleLogout} style={{ flexDirection: 'row', borderRadius: 25, width: '95%', height: 48, backgroundColor: 'red', justifyContent: 'space-between', alignSelf: 'center', marginTop: 60, padding: 10 }}>
             <Text style={{ fontWeight: '200', fontSize: 20, color: '#FFFFFF', left: 5 }}>Sign Out</Text>
             <Image source={require('../assets/Iocns/SignOut.png')} style={{ width: 26, height: 24, right: 5 }} />
           </TouchableOpacity>

@@ -1,10 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { Button, ScrollView, Text, FlatList } from 'react-native';
-import { Image, ImageBackground, Keyboard, StyleSheet, View, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
-import FullScreenModal from '../../components/FullScreenModal';
-import ContestScreenItems from '../../screenComponents/ContestScreenItems';
 import HorizontalTopList from '../../components/HorizontalTopList';
+import CreateTeamCard from '../../screenComponents/CreateTeamCard';
 
 const CreateTeam = ({ navigation }) => {
   const teamSize = 11;
@@ -17,6 +15,7 @@ const CreateTeam = ({ navigation }) => {
 
   const renderOption = (teamNumber) => {
     const isActive = selectedTeamNumber === teamNumber;
+    
     return (
       <TouchableOpacity
         key={teamNumber}
@@ -116,6 +115,19 @@ const CreateTeam = ({ navigation }) => {
     },
     // Add more card items here if needed
   ];
+  // Initialize selectedPlayers state with all values as false
+  const initialSelectedPlayers = cardData.reduce((acc, item) => {
+    acc[item.id] = false;
+    return acc;
+  }, {});
+  const [selectedPlayers, setSelectedPlayers] = useState(initialSelectedPlayers); // Store selected players by their card ID
+  console.log(selectedPlayers)
+  const handlePlayerSelect = (cardId) => {
+    setSelectedPlayers((prevState) => ({
+      ...prevState,
+      [cardId]: !prevState[cardId], // Toggle the selected state
+    }));
+  };
   // for dummy data
   const data = [
     { id: '1', title: 'League', titleImage: { activeImg: require('../../assets/Iocns/BatImgActive.png'), nonActiveImg: require('../../assets/Iocns/BatImg.png') } },
@@ -135,7 +147,7 @@ const CreateTeam = ({ navigation }) => {
         <Image source={require('../../assets/Images/TopRightBackground.png')} />
       </View>
       <View style={{ alignItems: 'center', position: 'absolute', flexDirection: 'column', justifyContent: 'flex-end', marginTop: '165%', width: '100%', flex: 1, zIndex: 999 }}>
-        <TouchableOpacity style={styles.buttonForAbsoulute} onPress={() => navigation.navigate('JoinContest')}>
+        <TouchableOpacity style={styles.buttonForAbsoulute} onPress={() => navigation.navigate('Contest')}>
           <Text style={{ color: '#fff', letterSpacing: 3, fontWeight: '400', fontSize: 12 }}>PREVIEW</Text>
         </TouchableOpacity>
       </View>
@@ -157,17 +169,17 @@ const CreateTeam = ({ navigation }) => {
           <View style={{ flexDirection: 'row', alignItems: 'center', left: 10, justifyContent: 'space-between' }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
               <Text style={{ fontWeight: '700', fontSize: 27 }}>Create Team</Text>
-              <View style={{zIndex:999, justifyContent: 'center', alignItems: 'center', width: 44, height: 44, backgroundColor: '#5AC73D', borderRadius: 100, bottom: 15, left: 0 }}>
-                <Text style={{ fontWeight: '700', fontSize: 13, color: '#ffff' }}>0/11</Text>
+              <View style={{ zIndex: 999, justifyContent: 'center', alignItems: 'center', width: 44, height: 44, backgroundColor: '#5AC73D', borderRadius: 100, bottom: 15, left: 0 }}>
+                <Text style={{ fontWeight: '700', fontSize: 13, color: '#ffff' }}>{selectedTeamNumber == null ? 0 : selectedTeamNumber}/11</Text>
               </View>
             </View>
 
-            <View style={{ flexDirection: 'row', gap: 5, right: 15 ,alignItems:'center'}}>
+            <View style={{ flexDirection: 'row', gap: 5, right: 15, alignItems: 'center' }}>
               <View style={{ alignItems: 'center' }}>
                 <Image source={require('../../assets/Images/AUSflag.png')} />
                 <Text style={{ fontWeight: '700', fontSize: 11 }}>0/0</Text>
               </View>
-              <Image source={require('../../assets/Iocns/VS.png')} style={{width:23,height:16}}/>
+              <Image source={require('../../assets/Iocns/VS.png')} style={{ width: 23, height: 16 }} />
               <View style={{ alignItems: 'center' }}>
                 <Image source={require('../../assets/Images/ENGlflag.png')} style={{}} />
                 <Text style={{ fontWeight: '700', fontSize: 11 }}>0/0</Text>
@@ -207,13 +219,13 @@ const CreateTeam = ({ navigation }) => {
 
           <View style={{ alignItems: 'center', marginTop: 10, left: 10, flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text style={{ color: '#7D7D7D', fontWeight: '400', fontSize: 16 }}>Select   <Text style={{ color: 'black', fontWeight: '400', fontSize: 16 }}>Batter (3-6)</Text></Text>
-            <TouchableOpacity style={{right:15}}>
+            <TouchableOpacity style={{ right: 15 }}>
               <Image source={require('../../assets/Iocns/FilterIcon.png')} style={{ width: 15, height: 16 }} />
             </TouchableOpacity>
           </View>
 
           {cardData.map((item, index) => (
-            <ContestScreenItems
+            <CreateTeamCard
               key={item.id}
               teamName={item.teamName}
               firstName={item.firstName}
@@ -226,6 +238,8 @@ const CreateTeam = ({ navigation }) => {
               VlowerP={item.viceCaptian.top}
               Vtop={item.viceCaptian.lowerP}
               userImg={item.userImg}
+              selected={selectedPlayers[item.id]} // Pass selected state based on the card ID
+              onSelect={() => handlePlayerSelect(item.id)} // Pass the handler function
             />
           ))}
         </View>

@@ -328,7 +328,7 @@ const TeamTwo = ({ navigation }) => {
                                 elevation: 5
                             }}
                             onPress={() => {
-                                navigation.navigate('CreateTeam')
+                                navigation.navigate('My matches')
                             }}
                         >
                             <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 12, fontWeight: '400', letterSpacing: 5 }}>

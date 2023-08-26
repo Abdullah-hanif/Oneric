@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Image, ImageBackground, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import GlobalHeader from '../../components/GlobalHeader';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ProfileSetupTwo = ({ navigation }) => {
     const [selectedValue, setSelectedValue] = useState(null);
@@ -17,7 +18,7 @@ const ProfileSetupTwo = ({ navigation }) => {
         setSelectedValue(value);
         setShowDropdown(false);
     };
-
+    
     return (
         <ImageBackground source={require('../../assets/Images/BgImageLite.png')} style={{ flex: 1 }}>
             <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'flex-end', left: 10 }}>
@@ -82,7 +83,7 @@ const ProfileSetupTwo = ({ navigation }) => {
                                 </View>
                             </View>
                         </View>
-                        <TouchableOpacity onPress={() => navigation.navigate('ProfileSetupTwo')} style={{ marginTop: '10%', padding: 10, alignItems: 'center', flexDirection: 'row', width: 199, height: 45, backgroundColor: '#FF0F0F', borderRadius: 53 }}>
+                        <TouchableOpacity onPress={() => navigation.navigate('CreateTeam')} style={{ marginTop: '10%', padding: 10, alignItems: 'center', flexDirection: 'row', width: 199, height: 45, backgroundColor: '#FF0F0F', borderRadius: 53 }}>
                             <Image source={require('../../assets/Iocns/RightArrow.png')} style={{ width: 26, height: 19 }} />
                             <Text style={{ fontWeight: '400', fontSize: 16, color: '#FFFFFF', left: 10, letterSpacing: 5 }}>CONTINUE</Text>
 

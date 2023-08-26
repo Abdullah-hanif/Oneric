@@ -64,13 +64,13 @@ const TeamOne = ({ navigation }) => {
                             <HorizontalTopList key={item.id} item={item} activeId={activeItemId} onPress={setActiveItemId} />
                         ))}
                     </ScrollView>
-                    <View style={{ alignSelf:'center',width: '95%', height: 223, marginTop: 50, overflow: 'visible' }}>
+                    <View style={{ alignSelf: 'center', width: '95%', height: 223, marginTop: 50, overflow: 'visible' }}>
                         <ImageBackground source={require('../../assets/Images/GroundImageOne.png')} style={{ overflow: 'visible', height: 193, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }} imageStyle={{ borderRadius: 10 }}>
                             <View style={{ borderWidth: 0.8, elevation: 3, padding: 15, justifyContent: 'center', opacity: 0.8, borderRadius: 30, backgroundColor: '#FFFFFF', width: '95%', alignSelf: 'center', height: 32, bottom: 15 }}>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                     <Text style={{ fontWeight: '800', fontSize: 12 }}>My Team 1</Text>
                                     <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                                        <TouchableOpacity style={{ elevation: 4, width: 23, height: 23, backgroundColor: '#000000', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
+                                        <TouchableOpacity onPress={() => navigation.navigate('CreateTeam')} style={{ elevation: 4, width: 23, height: 23, backgroundColor: '#000000', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
                                             <Image source={require('../../assets/Iocns/EditIcon.png')} style={{ width: 13, height: 13 }} />
                                         </TouchableOpacity>
                                         <TouchableOpacity style={{ elevation: 4, width: 23, height: 23, backgroundColor: '#000000', borderRadius: 30, alignItems: 'center', justifyContent: 'center' }}>
@@ -128,7 +128,7 @@ const TeamOne = ({ navigation }) => {
                                 elevation: 5
                             }}
                             onPress={() => {
-                                navigation.navigate('TeamTwo')
+                                navigation.navigate('CreateTeam')
                             }}
                         >
                             <Text style={{ color: '#FFFFFF', textAlign: 'center', fontSize: 12, fontWeight: '400', letterSpacing: 5 }}>

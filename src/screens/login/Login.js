@@ -1,20 +1,77 @@
-import React, { useState } from 'react';
-import { Image, ImageBackground, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { ActivityIndicator, Alert, Image, ImageBackground, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { countryData } from '../../CountryData';
 import RedButton from '../../components/RedButton';
+// firebase configuration
+import firebase from "firebase/compat/app";
+import { firebaseConfig } from '../../../config';
+// import firebase from 'firebase/compat/app';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 
 const Login = ({ navigation }) => {
     const [selectedCountry, setSelectedCountry] = useState(countryData[0]);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isEnabled, setIsEnabled] = useState(false);
+    // for firebase
+    const [code, setCode] = useState('');
+    const [verificationId, setVerificationId] = useState(null);
+    const recaptchaVerifier = useRef(null);
+    const [isPhoneNumberValid, setIsPhoneNumberValid] = useState(false); // New state for validation
+    const [isLoading, setIsLoading] = useState(false); // New state for validation
+
+    const sendVerification = () => {
+        setIsLoading(true);
+        const phoneProvider = new firebase.auth.PhoneAuthProvider();
+        phoneProvider
+            .verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
+            .then((verificationId) => {
+                setVerificationId(verificationId);
+                setPhoneNumber('');
+                setIsLoading(false);
+                // Navigate to OtpVerification screen
+                navigation.navigate('OtpVerification', { verificationId, phoneNumber }); // Make sure 'OtpVerification' matches your screen name
+
+            })
+            .catch((error) => {
+                console.error('Verification Error:', error);
+                Alert.alert('Verification Error', 'An error occurred during verification.');
+                setIsLoading(false);
+            });
+            setIsLoading(false);
+    };
+
+
+
+
+
+    const confirmCode = () => {
+        const credential = firebase.auth.PhoneAuthProvider.credential(
+            verificationId,
+            code
+        );
+        firebase.auth().signInWithCredential(credential)
+            .then(() => {
+                setCode('');
+            })
+            .catch((error) => {
+                alert(error);
+            })
+        Alert.alert('Login succesfully');
+    }
+
+    // firebase end
 
     const onSelectCountry = (country) => {
         setSelectedCountry(country);
     };
 
     const onChangePhoneNumber = (number) => {
+        const phoneNumberRegex = /^\+?\d{10,13}$/; // Custom regex for 10 to 13 digits
+        const isValid = phoneNumberRegex.test(number);
+        setIsPhoneNumberValid(isValid);
         setPhoneNumber(number);
     };
+
 
     const toggleSwitch = () => {
         setIsEnabled((previousState) => !previousState);
@@ -31,7 +88,11 @@ const Login = ({ navigation }) => {
                 </View>
                 {/* for logo */}
                 <View style={{ padding: 10, margin: 10, marginTop: 100 }}>
-                    <Image source={require('../../assets/Images/OnericLogo.png')} style={{resizeMode:'contain'}} />
+                    <FirebaseRecaptchaVerifierModal
+                        ref={recaptchaVerifier}
+                        firebaseConfig={firebaseConfig}
+                    />
+                    <Image source={require('../../assets/Images/OnericLogo.png')} style={{ resizeMode: 'contain' }} />
 
                     {/* for main content */}
 
@@ -55,7 +116,7 @@ const Login = ({ navigation }) => {
                                         placeholder="000 000 000 000"
                                         keyboardType="phone-pad"
                                         placeholderTextColor={'#FFFFFF'}
-                                        maxLength={12}
+                                        maxLength={13}
 
                                     />
                                     <Image source={require('../../assets/Iocns/MobileIcon.png')} />
@@ -72,13 +133,16 @@ const Login = ({ navigation }) => {
                             />
                             <Text style={styles.switchLabel}>I confirm that I am an Indian citizen of 18+ age and do
                                 not belong to the states of Assam, Odisha, Nagaland,
-                                Sikkim, Andhra Pradesh and Telangana.</Text>
+                                Sikkim, Andhra Pradesh and Telangana and please make sure your entire number minimum 12.</Text>
                         </View>
                         <View style={{ marginTop: '15%' }}>
                             <RedButton
-                                text={'Next'}
+                                text={isLoading == true ? <ActivityIndicator size={'small'} color={'white'}/> : 'Next'}
                                 iconImg={require('../../assets/Iocns/RightArrow.png')}
-                                onPress={() => (navigation.navigate('OtpVerification'))}
+                                onPress={sendVerification}
+                                disabled={!isPhoneNumberValid || !isEnabled} // Disable if either phone number is invalid or switch is not enabled
+                                isEnabled={isEnabled}
+                                isPhoneNumberValid={isPhoneNumberValid}
                             />
                         </View>
 

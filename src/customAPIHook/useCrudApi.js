@@ -4,7 +4,8 @@ const useCrudApi = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   // baseUrl
-  const baseUrl = 'https://jsonplaceholder.typicode.com';
+  // const baseUrl = 'https://jsonplaceholder.typicode.com';
+  const baseUrl = 'https://oneric1.vercel.app/';
 
   const fetchData = useCallback(async (url, method = 'GET', body = null) => {
     setLoading(true);

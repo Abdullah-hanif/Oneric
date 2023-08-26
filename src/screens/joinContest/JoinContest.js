@@ -186,28 +186,28 @@ const JoinContest = ({ navigation }) => {
                                 <Text style={{ fontWeight: '700', fontSize: 24, color: '#278C0C' }}>Wallet <Text style={{ color: '#000000', fontWeight: '400', fontSize: 24 }}>information</Text></Text>
                             </View>
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', marginTop: '15%' }}>
-                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 27, width: 71 }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 35, width: 71 }}>
                                     <View style={{ alignItems: 'center', width: 52, height: 55, backgroundColor: '#FFB800', borderRadius: 6, justifyContent: 'center', flexDirection: 'row' }}>
                                         <Text style={{ fontWeight: '700', fontSize: 27 }}>25</Text>
                                         <Text style={{ fontWeight: '700', fontSize: 27, bottom: 10 }}>₹</Text>
                                     </View>
                                     <Text style={{ fontWeight: '400', fontSize: 12, textAlign: 'center', width: 71 }}>Wallet Amount</Text>
                                 </View>
-                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 27, width: 71 }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 35, width: 71 }}>
                                     <View style={{ alignItems: 'center', width: 52, height: 55, backgroundColor: '#FFB800', borderRadius: 6, justifyContent: 'center', flexDirection: 'row' }}>
                                         <Text style={{ fontWeight: '700', fontSize: 27 }}>25</Text>
                                         <Text style={{ fontWeight: '700', fontSize: 27, bottom: 10 }}>₹</Text>
                                     </View>
                                     <Text style={{ fontWeight: '400', fontSize: 12, textAlign: 'center' }}>Joining Bonus Amount</Text>
                                 </View>
-                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 27, width: 71 }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 35, width: 71 }}>
                                     <View style={{ alignItems: 'center', width: 52, height: 55, backgroundColor: '#FFB800', borderRadius: 6, justifyContent: 'center', flexDirection: 'row' }}>
                                         <Text style={{ fontWeight: '700', fontSize: 27 }}>25</Text>
                                         <Text style={{ fontWeight: '700', fontSize: 27, bottom: 10 }}>₹</Text>
                                     </View>
                                     <Text style={{ fontWeight: '400', fontSize: 12, textAlign: 'center', width: 71 }}>Useable bonus amount</Text>
                                 </View>
-                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 27, width: 71 }}>
+                                <View style={{ alignItems: 'center', justifyContent: 'center', height: 35, width: 71 }}>
                                     <View style={{ alignItems: 'center', width: 52, height: 55, backgroundColor: '#FFB800', borderRadius: 6, justifyContent: 'center', flexDirection: 'row' }}>
                                         <Text style={{ fontWeight: '700', fontSize: 27 }}>25</Text>
                                         <Text style={{ fontWeight: '700', fontSize: 27, bottom: 10 }}>₹</Text>
@@ -215,7 +215,7 @@ const JoinContest = ({ navigation }) => {
                                     <Text style={{ fontWeight: '400', fontSize: 12, textAlign: 'center', width: 71 }}>Entry amount</Text>
                                 </View>
                             </View>
-                            <View style={{ marginTop: '20%' }}>
+                            <View style={{ marginTop: '15%' }}>
                                 <Text style={{ fontWeight: '400', fontSize: 20, textAlign: 'center' }}>Wallet Left Balance</Text>
                                 <View style={{ flexDirection: 'row', alignSelf: 'center' }}>
 

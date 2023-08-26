@@ -1,11 +1,13 @@
-import React, { useRef, useState } from 'react';
-import { Dimensions, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert, BackHandler, Dimensions, Image, ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FullScreenModal from '../../components/FullScreenModal';
 import GlobalHeader from '../../components/GlobalHeader';
 import HorizontalTopList from '../../components/HorizontalTopList';
 import FullScreenModalProfile from '../../screenComponents/FullScreenModalProfile';
 import FutureMatchesCard from '../../screenComponents/FutureMatchesCard';
 import UpCommingMatchesCard from '../../screenComponents/UpCommingMatchesCard';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { formatUnixTimestamp, formatUnixTimestampHM, formatUnixTimestampYMD, truncateString } from '../../common/Utils';
 
 const data = [
     { id: '1', title: 'League', titleImage: { activeImg: require('../../assets/Iocns/BatImgActive.png'), nonActiveImg: require('../../assets/Iocns/BatImg.png') } },
@@ -18,6 +20,9 @@ const data = [
 const Home = ({ navigation }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [activeItemId, setActiveItemId] = useState(null);
+    const [featruedMatches, setFeatruedMatches] = useState([]);
+    const [upCommingMatches, setUpcommingMatches] = useState([]);
+
     const toggleModal = () => {
         setIsModalVisible(!isModalVisible);
     };
@@ -36,24 +41,71 @@ const Home = ({ navigation }) => {
         { id: 3, title: 'circket', image: require('../../assets/Images/BannerImage.png') },
         // Add more banner items as needed
     ];
-    const dataUpCommingMatches = [
-        { id: '1', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '2', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '3', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '4', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '5', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '6', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '7', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        { id: '8', matchName: 'The Ashes - 2023', teamsOne: 'SRI', teamTwo: 'BAN', timeDuration: { hour: '48', min: '20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Images/AUSflag.png'), teamsOneName: 'SRI' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Images/ENGlflag.png'), teamsTwoName: 'ENG' } } },
-        // Add more items here if needed
-    ];
-    const dataFutureMatches = [
-        { id: '1', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
-        { id: '2', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
-        { id: '3', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
-        { id: '4', matchName: 'TNPL', teamsOne: 'RR', teamTwo: 'CSK', timeDuration: { totalTime: '48h 20m' }, batPrice: '8.25lakhs', teamsDetails: { teamOneDeatils: { flagFirstTeam: require('../../assets/Iocns/RRoyals.png'), teamsOneName: 'Rajasthan Royals' }, teamTwoDeatils: { flagSecondTeam: require('../../assets/Iocns/Chinai.png'), teamsTwoName: 'Chennai Super Kings' } } },
-        // Add more items here if needed
-    ];
+
+    const UpCommingMatches = async () => {
+        try {
+            const dataFromAsync = await AsyncStorage.getItem('currrentUserData');
+            const parsedObject = JSON.parse(dataFromAsync);
+
+            if (!parsedObject || !parsedObject.data || !parsedObject.data.token) {
+                console.error('Token not found in AsyncStorage data');
+                return;
+            }
+
+            const token = parsedObject.data.token;
+            const apiUrl = `https://oneric1.vercel.app/api/cricket/getLiveMatches?token=${token}`;
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response?.json();
+            if (responseData && responseData.data) {
+                const matches = responseData.data;
+                const formattedMatches = matches.map(match => ({
+                    format: match.format,
+                    teamA: match.teams.a,
+                    teamB: match.teams.b,
+                    key: match.key, // Use the unique key
+                    startAt: match.start_at // Include the start_at timestamp
+                }));
+                setUpcommingMatches(formattedMatches);
+            } else {
+                console.error('Expected data structure not found in API response');
+            }
+        } catch (error) {
+            console.error('Error fetching feature matches:', error);
+        }
+    };
+
+    const fetchFeatureMatches = async () => {
+        try {
+            const dataFromAsync = await AsyncStorage.getItem('currrentUserData');
+            const parsedObject = JSON.parse(dataFromAsync);
+
+            if (!parsedObject || !parsedObject.data || !parsedObject.data.token) {
+                console.error('Token not found in AsyncStorage data');
+                return;
+            }
+
+            const token = parsedObject.data.token;
+
+            const apiUrl = `https://oneric1.vercel.app/api/cricket/getfeaturedMatches?token=${token}`;
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const responseData = await response.json();
+            if (responseData && responseData.data && responseData.data.matches) {
+                setFeatruedMatches(responseData?.data?.matches);
+            } else {
+                console.error('Expected data structure not found in API response');
+            }
+        } catch (error) {
+            console.error('Error fetching feature matches:', error);
+        }
+    };
+
 
     const handleSlideChange = (event) => {
         const slideWidth = event.nativeEvent.layoutMeasurement.width;
@@ -62,11 +114,40 @@ const Home = ({ navigation }) => {
         setCurrentPage(pageIndex);
     };
 
+    useEffect(() => {
+        // Add back button listener
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
+
+        // Cleanup
+        return () => backHandler.remove();
+    }, []);
+
+    // for API only
+    useEffect(() => {
+        fetchFeatureMatches();
+        UpCommingMatches();
+    }, []);
+
+    // Function to handle back button press
+    const handleBackPress = async () => {
+        const userData = await AsyncStorage.getItem('currrentUserData');
+        if (userData) {
+            // If user is logged in, prevent navigating back and exit app
+            Alert.alert('Exit App', 'Are you sure you want to exit?', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Exit', onPress: () => BackHandler.exitApp() }
+            ]);
+            return true; // Prevent default behavior
+        } else {
+            // If user is not logged in, allow navigating back
+            navigation.goBack();
+            return true; // Prevent default behavior
+        }
+    };
     return (
 
         <ImageBackground source={require('../../assets/Images/BgImageLite.png')} style={{ flex: 1 }}>
             <View style={styles.main} >
-
                 <View style={{ position: 'absolute', flexDirection: 'row', justifyContent: 'flex-end', left: 10 }}>
                     <Image source={require('../../assets/Images/TopRightBackground.png')} />
                 </View>
@@ -134,24 +215,24 @@ const Home = ({ navigation }) => {
                             <Text style={{ fontWeight: '400', fontSize: 14 }}>Featured <Text style={{ color: '#FF0F0F', fontWeight: '600' }}>Matches</Text></Text>
                             <Image source={require('../../assets/Iocns/signals.png')} style={{ left: 10, width: 16, height: 11 }} />
                         </View>
-                        <TouchableOpacity onPress={() => navigation.navigate('Contest')}>
+                        <TouchableOpacity onPress={() => navigation.navigate('JoinContest')}>
                             <Image source={require('../../assets/Iocns/RightSideArrow.png')} style={{ right: 20, width: 10, height: 16 }} />
                         </TouchableOpacity  >
                     </View>
 
                     <ScrollView horizontal scrollIndicatorInsets={false} style={{ padding: 1, margin: 1, marginTop: 10 }}>
-                        {dataFutureMatches.map((item) => (
-                            <View style={{ margin: 5 }} key={item.id}>
+                        {featruedMatches && featruedMatches?.map((item) => (
+                            <View style={{ margin: 5 }} key={item?.key} >
                                 <FutureMatchesCard
-                                    MatchName={item?.matchName}
-                                    teamOne={item?.teamsOne}
-                                    teamTwo={item?.teamTwo}
-                                    teamOneFlag={item?.teamsDetails?.teamOneDeatils?.flagFirstTeam}
-                                    teamOneName={item?.teamsDetails?.teamOneDeatils?.teamsOneName}
-                                    teamTwoFlag={item?.teamsDetails?.teamTwoDeatils?.flagSecondTeam}
-                                    teamTwoName={item?.teamsDetails?.teamTwoDeatils?.teamsTwoName}
-                                    remainingTime={item.timeDuration?.totalTime}
-                                    totalAmount={item?.batPrice}
+                                    MatchName={item?.format || '--'}
+                                    teamShortCode={item?.short_name || '-'}
+                                    teamOneName={item?.teams?.a?.name || '-'}
+                                    teamTwoName={item?.teams?.b?.name || '-'}
+                                    remainingTime={formatUnixTimestamp(item?.start_at) || '-'}
+                                    flagAteam={item?.teams?.a?.flag || require('../../assets/Iocns/FlagPlaceholder.png')}
+                                    flagBteam={item?.teams?.b?.flag || require('../../assets/Iocns/FlagPlaceholder.png')}
+                                // totalAmount={item?.batPrice}
+                                // onPress={() => navigation.navigate('JoinContest')}
                                 />
                             </View>
                         ))}
@@ -169,23 +250,24 @@ const Home = ({ navigation }) => {
 
                     {/* cards upcommings*/}
                     <View style={styles.container}>
-                        {dataUpCommingMatches.slice(0, 6).map((item, index) => (
-                            <View key={item.id} style={index % 2 === 0 ? styles.leftColumn : styles.rightColumn}>
+                        {upCommingMatches.map((item, index) => (
+                            <View key={item?.key} style={index % 2 === 0 ? styles.leftColumn : styles.rightColumn}>
                                 <UpCommingMatchesCard
-                                    matchName={item?.matchName}
-                                    teamOne={item?.teamsOne}
-                                    teamTwo={item?.teamTwo}
-                                    flagFirstTeam={item?.teamsDetails?.teamOneDeatils?.flagFirstTeam}
-                                    teamsOneName={item?.teamsDetails?.teamOneDeatils?.teamsOneName}
-                                    flagSecondTeam={item?.teamsDetails?.teamTwoDeatils?.flagSecondTeam}
-                                    teamsTwoName={item?.teamsDetails?.teamTwoDeatils?.teamsTwoName}
-                                    hour={item?.timeDuration?.hour}
-                                    min={item?.timeDuration?.min}
-                                    batPrice={item?.batPrice}
+                                    matchName={item?.format || '-'}
+                                    teamOne={item?.teamA?.country_code || '-'}
+                                    teamTwo={item?.teamB?.country_code || '-'}
+                                    flagFirstTeam={item?.teamsDetails?.teamOneDeatils?.flagFirstTeam || require('../../assets/Iocns/FlagPlaceholder.png')}
+                                    teamsOneName={item?.teamA?.country_code || '-'}
+                                    flagSecondTeam={item?.teamsDetails?.teamTwoDeatils?.flagSecondTeam || require('../../assets/Iocns/FlagPlaceholder.png')}
+                                    teamsTwoName={item?.teamB?.country_code || '-'}
+                                    hour={formatUnixTimestamp(item?.startAt, { date: true }) || '-'}
+                                    min={formatUnixTimestamp(item?.startAt, { time: true }) || '-'}
+                                    batPrice={'00'}
                                 />
                             </View>
                         ))}
                     </View>
+
                     {/* cards upcommings*/}
 
                     <View style={{ marginTop: 10, bottom: 5 }}>

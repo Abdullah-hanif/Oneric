@@ -101,7 +101,7 @@ const Contest = ({ navigation }) => {
                 <Image source={require('../../assets/Images/TopRightBackground.png')} />
             </View>
             <View style={{ alignItems: 'center', position: 'absolute', flexDirection: 'column', justifyContent: 'flex-end', marginTop: '165%', width: '100%', flex:1, zIndex: 999 }}>
-                <TouchableOpacity style={styles.buttonForAbsoulute} onPress={()=>navigation.navigate('LeagueSetting')}>
+                <TouchableOpacity style={styles.buttonForAbsoulute} onPress={()=>navigation.navigate('TeamTwo')}>
                     <Text style={{ color: '#fff', letterSpacing: 3, fontWeight: '400', fontSize: 12 }}>PREVIEW</Text>
                 </TouchableOpacity>
             </View>

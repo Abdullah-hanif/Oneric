@@ -1,12 +1,18 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { Image, ImageBackground, Keyboard, KeyboardAvoidingView, ScrollView, StyleSheet, Switch, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { countryData } from '../../CountryData';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Alert, BackHandler, Image, ImageBackground, Keyboard, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import RedButton from '../../components/RedButton';
+// firebase imports
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import firebase from "firebase/compat/app";
+import useCrudApi from '../../customAPIHook/useCrudApi';
 
-const OtpVerification = ({ navigation }) => {
+const OtpVerification = ({ navigation, route }) => {
+    const { verificationId, phoneNumber } = route.params;
     const [otp, setOtp] = useState('');
     const [remainingTime, setRemainingTime] = useState(60);
-    const inputRefs = Array(7)
+    const [loadingVisible, setLoadingVisible] = useState(false);
+
+    const inputRefs = Array(6)
         .fill()
         .map((_, index) => useRef(null));
 
@@ -17,7 +23,7 @@ const OtpVerification = ({ navigation }) => {
             return updatedOtp.join('');
         });
 
-        if (value && index < 6) {
+        if (value && index < 5) {
             inputRefs[index + 1].current.focus();
         }
     };
@@ -56,7 +62,82 @@ const OtpVerification = ({ navigation }) => {
         return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     };
 
+    useEffect(() => {
+        // Add back button listener
+        const backHandler = BackHandler.addEventListener('hardwareBackPress', handleBackPress);
 
+        // Cleanup
+        return () => backHandler.remove();
+    }, []);
+
+    // Function to handle back button press
+    const handleBackPress = () => {
+        if (firebase.auth().currentUser) {
+            // If user is logged in, prevent navigating back and exit app
+            Alert.alert('Exit App', 'Are you sure you want to exit?', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Exit', onPress: () => BackHandler.exitApp() }
+            ]);
+            return true; // Prevent default behavior
+        } else {
+            // If user is not logged in, allow navigating back
+            navigation.goBack();
+            return true; // Prevent default behavior
+        }
+    };
+
+    // firebase
+    const kyc = true;
+    const confirmCode = async () => {
+        const userData = await AsyncStorage.getItem('currrentUserData');
+        console.log(userData, 'come from async========')
+        setLoadingVisible(true); // Show loading indicator
+        const credential = firebase.auth.PhoneAuthProvider.credential(
+            verificationId,
+            otp
+        );
+
+        try {
+            // Sign in with the provided OTP credential
+            await firebase.auth().signInWithCredential(credential);
+            setOtp(''); // Clear the OTP input field
+
+            // Manually fetch API
+            const response = await fetch('https://oneric1.vercel.app/api/users/register', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ phoneNumber }),
+            });
+
+            const responseData = await response.json();
+
+            if (response.ok) {
+                console.log('API response:', responseData);
+
+                await AsyncStorage.setItem('currrentUserData', JSON.stringify(responseData));
+                console.log('Data saved in AsyncStorage:', responseData);
+
+                // TODO=== if (responseData.isKYCVerified) {
+                if (kyc) {
+                    navigation.navigate('Home');
+                } else {
+                    navigation.navigate('ProfileSetupTwo');
+                }
+
+                Alert.alert('Login successful');
+            } else {
+                console.warn('API Error:', responseData);
+                Alert.alert('Error', 'Incorrect OTP or API error. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            Alert.alert('Error', 'An error occurred. Please try again.');
+        } finally {
+            setLoadingVisible(false); // Hide loading indicator (regardless of success or error)
+        }
+    };
     return (
 
         <ImageBackground source={require('../../assets/Images/BgImageLite.png')} style={{ flex: 1 }}>
@@ -76,7 +157,7 @@ const OtpVerification = ({ navigation }) => {
                     <ScrollView style={{ padding: 5, margin: 5 }} >
                         <Text style={{ fontSize: 35, fontWeight: '900', }}>OTP <Text style={{ fontWeight: '300' }}>Verification</Text></Text>
                         <Text style={{ fontSize: 25, fontWeight: '200' }}>Please enter the OTP sent to</Text>
-                        <Text style={{ fontSize: 18, fontWeight: '400', color: '#0D8BEE' ,textDecorationLine:'underline'}}>+91 78145799499</Text>
+                        <Text style={{ fontSize: 18, fontWeight: '400', color: '#0D8BEE', textDecorationLine: 'underline' }}>{phoneNumber}</Text>
 
                         <View style={{ marginTop: 19 }}>
                             <Text style={{ fontWeight: 400, fontSize: 16 }}>Enter OTP</Text>
@@ -119,9 +200,10 @@ const OtpVerification = ({ navigation }) => {
                         </View>
                         <View style={{ marginTop: '15%' }}>
                             <RedButton
-                                text={'Verify'}
+                                text={loadingVisible == true ? <ActivityIndicator size="small" color="white" /> : 'Verify'}
                                 iconImg={require('../../assets/Iocns/RightArrow.png')}
-                                onPress={() => (navigation.navigate('Home'))}
+                                onPress={confirmCode}
+
                             />
                         </View>
 
@@ -143,10 +225,6 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: 'transparent',
     },
-
-
-
-
 
     otpContainer: {
         flexDirection: 'row',
@@ -192,7 +270,7 @@ const styles = StyleSheet.create({
     timerTextExpire: {
         fontSize: 16,
         fontWeight: 'bold',
-        
+
     },
 
 })

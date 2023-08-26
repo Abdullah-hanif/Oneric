@@ -15,7 +15,8 @@ const Navigation = () => {
             <Stack.Navigator screenOptions={{
                 headerShown: false,
             }}
-                initialRouteName='Splash'>
+                initialRouteName='Login'>
+                {/* <Stack.Screen name="Login" component={Login} /> */}
                 <Stack.Screen name="Splash" component={Splash} />
                 <Stack.Screen name="Login" component={Login} />
                 <Stack.Screen name="OtpVerification" component={OtpVerification} />
@@ -83,19 +84,19 @@ function MyTabs() {
                             require('../../assets/Iocns/HomeBottomActive.png'),
                             require('../../assets/Iocns/HomeBottom.png')
                         );
-                        return <Image source={iconSource} style={{resizeMode:'contain'}}/>;
+                        return <Image source={iconSource} style={{ resizeMode: 'contain' }} />;
                     },
                 }} />
-            <Tab.Screen name="My matches " component={TeamOne}
+            <Tab.Screen name="My matches" component={TeamOne}
                 options={{
                     tabBarIcon: ({ focused, color }) => {
                         const iconSource = getTabIconSource(
                             focused,
-                            require('../../assets/Iocns/BottomBatImgActive.png'),   
+                            require('../../assets/Iocns/BottomBatImgActive.png'),
                             require('../../assets/Iocns/BottomBatImg.png')
                         );
 
-                        return <Image source={iconSource} style={{resizeMode:'contain'}}/>;
+                        return <Image source={iconSource} style={{ resizeMode: 'contain' }} />;
                     },
                 }} />
             <Tab.Screen name="Rewards" component={Wallet}
@@ -106,7 +107,7 @@ function MyTabs() {
                             require('../../assets/Iocns/RewardsBottomActive.png'),
                             require('../../assets/Iocns/RewardsBottom.png')
                         );
-                        return <Image source={iconSource} style={{resizeMode:'contain'}}/>;
+                        return <Image source={iconSource} style={{ resizeMode: 'contain' }} />;
                     },
 
                 }} />
@@ -119,7 +120,7 @@ function MyTabs() {
                             require('../../assets/Iocns/MedalBttom.png')
                         );
 
-                        return <Image source={iconSource} style={{resizeMode:'contain'}}/>;
+                        return <Image source={iconSource} style={{ resizeMode: 'contain' }} />;
                     },
                 }} />
 
