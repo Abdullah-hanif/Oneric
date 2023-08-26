@@ -79,8 +79,6 @@ const JoinContest = ({ route, navigation }) => {
 
   const getMatchById = async (id) => {
     const response = await MatchApiService.getMatchById(id);
-    console.log("selectedMatch", response?.data?.teamA);
-
     if (response?.data?.teamA && response?.data?.teamB) {
       setSelectedMatch(response?.data);
     }
