@@ -1,9 +1,9 @@
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 
 const UpCommingMatchesCard = ({ ...props }) => {
     return (
-        <View style={{ padding: 8, width: 160, maxHeight: 200,minHeight:180, backgroundColor: '#1D1E22', borderRadius: 8 }}>
+        <TouchableOpacity style={{ padding: 8, width: 160, maxHeight: 200,minHeight:180, backgroundColor: '#1D1E22', borderRadius: 8 }} onPress={props.onPress}>
             <View style={{ position: 'absolute', justifyContent: 'flex-end', alignSelf: 'flex-end', }}>
                 <Image source={require('../assets/Iocns/MegaSticker.png')} style={{resizeMode:'contain', position: 'relative', width: 48, height: 48 }} />
             </View>
@@ -32,7 +32,7 @@ const UpCommingMatchesCard = ({ ...props }) => {
                 }}
             />
             <Text style={{ fontWeight: '400', fontSize: 14, color: '#ffff', top: 5, textAlign: 'right', right: 5 }}>₹ {props.batPrice}</Text>
-        </View>
+        </TouchableOpacity>
     )
 }
 
