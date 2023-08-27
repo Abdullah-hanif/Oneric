@@ -49,6 +49,7 @@ const Contest = ({ route, navigation }) => {
       selectedMatch: selectedMatch,
       selectedCaptain: selectedCaptain,
       selectedViceCaptain: selectedViceCaptain,
+      isEdit: true
     });
   };
 

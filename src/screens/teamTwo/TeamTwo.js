@@ -30,6 +30,7 @@ const TeamTwo = ({ route, navigation }) => {
     selectedCaptain,
     selectedViceCaptain,
     selectedWicketKeeper,
+    isEdit,
   } = route.params;
 
   const selectedBowlers = selectedPlayers?.filter((item) => {
@@ -60,7 +61,7 @@ const TeamTwo = ({ route, navigation }) => {
     );
   });
 
-  console.log("selectedPlayers", {
+  console.log("selectedPlayers==============>", {
     selectedPlayers,
     selectedMatch,
     selectedCaptain,
@@ -454,32 +455,34 @@ const TeamTwo = ({ route, navigation }) => {
               marginTop: "35%",
             }}
           >
-            <TouchableOpacity
-              style={{
-                width: 258,
-                height: 45,
-                alignSelf: "center",
-                justifyContent: "center",
-                backgroundColor: "#000000", // Change this to your desired button color
-                borderRadius: 53,
-                elevation: 5,
-              }}
-              onPress={() => {
-                setIsDialogVisible(true);
-              }}
-            >
-              <Text
+            {isEdit && (
+              <TouchableOpacity
                 style={{
-                  color: "#FFFFFF",
-                  textAlign: "center",
-                  fontSize: 12,
-                  fontWeight: "400",
-                  letterSpacing: 5,
+                  width: 258,
+                  height: 45,
+                  alignSelf: "center",
+                  justifyContent: "center",
+                  backgroundColor: "#000000", // Change this to your desired button color
+                  borderRadius: 53,
+                  elevation: 5,
+                }}
+                onPress={() => {
+                  setIsDialogVisible(true);
                 }}
               >
-                CREATE TEAM
-              </Text>
-            </TouchableOpacity>
+                <Text
+                  style={{
+                    color: "#FFFFFF",
+                    textAlign: "center",
+                    fontSize: 12,
+                    fontWeight: "400",
+                    letterSpacing: 5,
+                  }}
+                >
+                  CREATE TEAM
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </ScrollView>

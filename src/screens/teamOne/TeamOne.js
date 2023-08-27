@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import TeamApiService from "../../services/TeamApiService";
 import { ROLES } from "../../common/Constants";
 import PlayerCard from "../../components/shared/PlayerCard";
+import FullScreenLoader from "../../components/shared/Loading";
 
 // for dummy data
 const data = [
@@ -101,6 +102,7 @@ const dataTwo = [
 const TeamOne = ({ navigation }) => {
   const [activeItemId, setActiveItemId] = useState(null);
   const [myTeams, setMyTeams] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const userFromStorage = useSelector((state) => state.user);
 
@@ -108,8 +110,6 @@ const TeamOne = ({ navigation }) => {
     const unsubscribe = navigation.addListener("focus", () => {
       if (userFromStorage) {
         const userId = userFromStorage?.id;
-        // getAllPlayers(matchId);
-        // console.log("userId", userId);
         getMyTeams(userId);
       }
     });
@@ -117,10 +117,14 @@ const TeamOne = ({ navigation }) => {
   }, [userFromStorage]);
 
   const getMyTeams = async (userId) => {
+    setIsLoading(true);
     const response = await TeamApiService.getMyTeams(userId);
     if (response?.success) {
       const allTeams = response?.data;
       setMyTeams(allTeams);
+      setIsLoading(false);
+    } else {
+      setIsLoading(false);
     }
   };
 
@@ -221,10 +225,20 @@ const TeamOne = ({ navigation }) => {
                     <Image
                       source={require("../../assets/Iocns/EditIcon.png")}
                       style={{ width: 13, height: 13 }}
+                      resizeMode="contain"
                     />
                   </TouchableOpacity>
                 )}
                 <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("TeamTwo", {
+                      selectedPlayers: item?.players,
+                      selectedMatch: item?.match,
+                      selectedCaptain: item?.captain,
+                      selectedViceCaptain: item?.viceCaptian,
+                      isEdit: false,
+                    });
+                  }}
                   style={{
                     elevation: 4,
                     width: 23,
@@ -235,7 +249,10 @@ const TeamOne = ({ navigation }) => {
                     justifyContent: "center",
                   }}
                 >
-                  <Image source={require("../../assets/Iocns/CopyIcon.png")} />
+                  <Image
+                    source={require("../../assets/Iocns/CopyIcon.png")}
+                    resizeMode="contain"
+                  />
                 </TouchableOpacity>
               </View>
             </View>
@@ -301,6 +318,7 @@ const TeamOne = ({ navigation }) => {
       source={require("../../assets/Images/BgImageLite.png")}
       style={{ flex: 1 }}
     >
+      <FullScreenLoader show={isLoading} />
       <View
         style={{
           position: "absolute",
@@ -360,7 +378,13 @@ const TeamOne = ({ navigation }) => {
               />
             ))}
           </ScrollView> */}
-          {myTeams?.length > 0 && myTeams.map((item) => <MyTeamCard key={item.id} item={item} />)}
+          {myTeams?.length > 0 ? (
+            myTeams.map((item) => <MyTeamCard key={item.id} item={item} />)
+          ) : (
+            <Text style={{ textAlign: "center", marginTop: 50 }}>
+              No teams created yet
+            </Text>
+          )}
 
           <View
             style={{
@@ -381,7 +405,7 @@ const TeamOne = ({ navigation }) => {
                 elevation: 5,
               }}
               onPress={() => {
-                // navigation.navigate("CreateTeam", { matchId: item?.match?.id });
+                navigation.navigate("UpCommingMatches");
               }}
             >
               <Text
