@@ -125,7 +125,7 @@ const OtpVerification = ({ navigation, route }) => {
       const response = await fetch(`${BASE_URL}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phoneNumber }),
+        body: JSON.stringify({ phone: phoneNumber }),
       });
 
       const responseData = await response.json();
