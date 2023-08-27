@@ -17,9 +17,10 @@ import { getUserDataFromAsyncStorage } from "../../common/Utils";
 import { BASE_URL } from "../../common/BaseUrl";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useDispatch, useSelector } from "react-redux";
-import { saveUser } from "../../redux/reducers/user/action";
+import { saveUser, logoutUser } from "../../redux/reducers/user/action";
 import { Alert } from "react-native";
-
+import * as ImagePicker from 'expo-image-picker';
+import UploadCloudinary from "../../common/UploadCloudinary";
 // for dummy data
 const data = [
   {
@@ -104,6 +105,9 @@ const ProfileSetupOne = ({ navigation }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const [userData, setUserData] = useState(null);
+  const [refNumber, setRefNumber] = useState('');
+
+  const [file, setFile] = useState(null);
 
   // redux components
   const dispatch = useDispatch();
@@ -119,17 +123,23 @@ const ProfileSetupOne = ({ navigation }) => {
     }
   }, [userFromStorage]);
 
+  console.log("userData====================", userData)
   const handleNext = async () => {
     try {
       if (userData?.username === "" || userData?.username === null) {
         Alert.alert("Please enter your name");
         return;
       }
-      setIsLoading(true);
-      const response = await fetch(`${BASE_URL}/users/${userData.id}`, {
+      // setIsLoading(true);
+      // console.log("response==============",
+      //   { username: userData?.username, refralCode: refNumber, avatar: url }
+      // )
+      // const url = await UploadCloudinary(file)
+
+      const response = await fetch(`${BASE_URL}/users/${userData?.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username: userData?.username }),
+        body: JSON.stringify({ username: userData?.username, refralCode: refNumber, avatar: file?.toString() || null }),
       });
       const responseData = await response.json();
       if (responseData.success) {
@@ -148,6 +158,29 @@ const ProfileSetupOne = ({ navigation }) => {
     }
   };
 
+
+
+  const handleImagePick = async () => {
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        setFile(result.assets[0].uri);
+      }
+    } catch (error) {
+      console.error("Error picking image:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    dispatch(logoutUser())
+    navigation.navigate('Login')
+  }
   return (
     <ImageBackground
       source={require("../../assets/Images/BgImageLite.png")}
@@ -230,16 +263,22 @@ const ProfileSetupOne = ({ navigation }) => {
                     alignItems: "center",
                     justifyContent: "center",
                   }}
+                  onPress={handleImagePick}
                 >
                   <Image
                     source={require("../../assets/Iocns/ProfileSetupPlus.png")}
                     style={{ width: 20, height: 20 }}
                   />
                 </TouchableOpacity>
-                <Image
-                  source={require("../../assets/Images/ProfileSetupUser.png")}
-                  style={{ width: 142, height: 142 }}
-                />
+
+                {file ? (
+                  <Image source={{ uri: file }} style={{ width: 142, height: 142 }} />
+                ) : (
+                  <Image
+                    source={require("../../assets/Images/ProfileSetupUser.png")}
+                    style={{ width: 142, height: 142 }}
+                  />
+                )}
               </View>
               <View style={styles.container}>
                 <View style={styles.row}>
@@ -344,6 +383,7 @@ const ProfileSetupOne = ({ navigation }) => {
                   <TextInput
                     placeholder="Optional..."
                     placeholderTextColor={"white"}
+                    onChangeText={(text) => setRefNumber(text)}
                     style={{
                       height: "100%",
                       width: "100%",
@@ -385,6 +425,38 @@ const ProfileSetupOne = ({ navigation }) => {
                 }}
               >
                 CONTINUE
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => {
+                handleLogout()
+              }}
+              style={{
+                marginTop: "10%",
+                padding: 10,
+                alignItems: "center",
+                flexDirection: "row",
+                width: 199,
+                height: 45,
+                backgroundColor: isLoading ? "gray" : "#FF0F0F",
+                borderRadius: 53,
+              }}
+            >
+              <Image
+                source={require("../../assets/Iocns/RightArrow.png")}
+                style={{ width: 26, height: 19 }}
+              />
+              <Text
+                style={{
+                  fontWeight: "400",
+                  fontSize: 16,
+                  color: "#FFFFFF",
+                  left: 10,
+                  letterSpacing: 5,
+                }}
+              >
+                LOGOUT
               </Text>
             </TouchableOpacity>
           </View>

@@ -20,7 +20,7 @@ const Splash = () => {
 
   const checkSession = async () => {
     try {
-      if (userData) {
+      if (userData && userData.id) {
         if (userData?.isKYCVerified) {
           navigation.navigate("Home");
         } else {
@@ -61,7 +61,7 @@ const Splash = () => {
         <View style={{ alignSelf: "center" }}>
           <TouchableOpacity
             onPress={() => {
-              if (userData) {
+              if (userData && userData?.isKYCVerified) {
                 navigation.navigate("Home");
               } else {
                 navigation.navigate("Login");

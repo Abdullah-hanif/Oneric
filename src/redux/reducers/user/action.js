@@ -11,9 +11,11 @@ export const logoutUser = () => {
   return {
     type: LOGOUT_USER,
     payload: {
-      username: null,
-      id: null,
+      userName: null,
+      userId: null,
       email: null,
+      imageUrl: null,
+      type: "customer",
     },
   };
 };

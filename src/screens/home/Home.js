@@ -76,7 +76,7 @@ const Home = ({ navigation }) => {
   const [activeItemId, setActiveItemId] = useState(null);
   const [featruedMatches, setFeatruedMatches] = useState([]);
   const [upCommingMatches, setUpcommingMatches] = useState([]);
-
+  
   const toggleModal = () => {
     setIsModalVisible(!isModalVisible);
   };
@@ -121,6 +121,7 @@ const Home = ({ navigation }) => {
       if (responseData && responseData.data) {
         const matches = responseData.data;
         const formattedMatches = matches.map((match) => ({
+          ...match,
           id: match.id,
           format: match.format,
           teamA: match.teamA,
@@ -223,7 +224,7 @@ const Home = ({ navigation }) => {
             styleRight={{ width: 7, height: 28, left: 20 }}
             sourceRSleftIcon={require("../../assets/Iocns/WalletHeader.png")}
             TextRSrighttext={"20"}
-            // sourceRSRightIcon={require('../../assets/Images/ProfileImage.png')}
+          // sourceRSRightIcon={require('../../assets/Images/ProfileImage.png')}
           />
           <View style={{ flexDirection: "column", left: 10 }}>
             <Text style={{ fontWeight: "700", fontSize: 24 }}>Dashboard</Text>
@@ -335,10 +336,11 @@ const Home = ({ navigation }) => {
           >
             {featruedMatches &&
               featruedMatches?.map((item) => {
+                const format = truncateString((item?.format || item?.tournament?.short_name || "--"), 10)
                 return (
                   <View style={{ margin: 5 }} key={item?.key}>
                     <FutureMatchesCard
-                      MatchName={item?.format || "--"}
+                      MatchName={format}
                       teamShortCode={item?.short_name || "-"}
                       teamOneName={item?.teamA?.name || "-"}
                       teamTwoName={item?.teamB?.name || "-"}
@@ -352,7 +354,7 @@ const Home = ({ navigation }) => {
                         require("../../assets/Iocns/FlagPlaceholder.png")
                       }
                       totalAmount={item?.winingPrice || "--"}
-                      // onPress={() => navigation.navigate('JoinContest')}
+                    // onPress={() => navigation.navigate('JoinContest')}
                     />
                   </View>
                 );
@@ -393,6 +395,8 @@ const Home = ({ navigation }) => {
           {/* cards upcommings*/}
           <View style={styles.container}>
             {upCommingMatches.map((item, index) => {
+              const format = truncateString((item?.format || item?.tournament?.short_name || "--"), 10)
+
               return (
                 <View
                   key={item?.key}
@@ -401,7 +405,7 @@ const Home = ({ navigation }) => {
                   }
                 >
                   <UpCommingMatchesCard
-                    matchName={item?.format || "--"}
+                    matchName={format}
                     teamOne={item?.teamA?.code || "--"}
                     teamTwo={item?.teamB?.code || "--"}
                     flagFirstTeam={

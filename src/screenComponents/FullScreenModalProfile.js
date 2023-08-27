@@ -3,27 +3,33 @@ import React from 'react'
 import { Modal } from 'react-native'
 import { CommonActions, useNavigation } from '@react-navigation/native'
 import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useDispatch } from 'react-redux'
+import { logoutUser } from "../redux/reducers/user/action"
 
 const FullScreenModalProfile = ({ isVisible, onClose, content }) => {
   const nav = useNavigation();
+  const dispatch = useDispatch()
+
   const handleLogout = async () => {
     try {
-        // Remove user data from AsyncStorage
-        await AsyncStorage.removeItem('currrentUserData');
-        console.log('User data removed from AsyncStorage');
-        Alert.alert('Logged out successfully');
+      // Remove user data from AsyncStorage
+      await removeLocalUser()
 
-        // Reset navigation stack and navigate to the Login screen
-        nav.dispatch(
-            CommonActions.reset({
-                index: 0,
-                routes: [{ name: 'Login' }],
-            })
-        );
+      // Reset navigation stack and navigate to the Login screen
+      nav.dispatch(
+        CommonActions.reset({
+          index: 0,
+          routes: [{ name: 'Login' }],
+        })
+      );
     } catch (error) {
-        console.error('Error logging out:', error);
+      console.error('Error logging out:', error);
     }
-};
+  };
+
+  const removeLocalUser = async () => {
+    dispatch(logoutUser())
+  }
   return (
     // <Image source={require('../assets/Iocns/BackIconWhite.png')}/>
     <Modal animationType="fade" transparent={true} visible={isVisible} onRequestClose={onClose}>

@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
+  ActivityIndicator,
+  Alert,
   Image,
   ImageBackground,
   ScrollView,
@@ -7,26 +9,34 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
-import GlobalHeader from "../../components/GlobalHeader";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import { useDispatch, useSelector } from "react-redux";
+import { BASE_URL } from "../../common/BaseUrl";
+import CustomBottomSheet from "../../components/CustomBottomSheet";
+import GlobalHeader from "../../components/GlobalHeader";
+import { saveUser } from "../../redux/reducers/user/action";
+import { validateInputs } from '../../common/ValidationAndRegex';
+import { createJsonReviver } from "../../common/Utils";
 
 const ProfileSetupTwo = ({ navigation }) => {
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [KYCstate, setKYCstate] = useState('');
+  const [adhaarNumber, setAdhaarNumber] = useState('');
+  const [adhaarOtp, setAdhaarOtp] = useState('');
+  const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const otpTextInputRef = useRef(null); // Create a ref
 
-  const dropdownData = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
-    // Add more options as needed
-  ];
+  // if you need to B-sheet on button 
+  // const openBottomSheet = () => {
+  //   setIsBottomSheetVisible(true);
+  // };
 
-  const handleDropdownSelect = (value) => {
-    setSelectedValue(value);
-    setShowDropdown(false);
+  const closeBottomSheet = () => {
+    setIsBottomSheetVisible(false);
   };
 
   // redux components
@@ -43,6 +53,109 @@ const ProfileSetupTwo = ({ navigation }) => {
       console.error("Error in profile setup one screen:", error);
     }
   }, [userFromStorage]);
+
+
+
+  const DOB = selectedDate;
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (date) => {
+    setSelectedDate(date);
+    hideDatePicker();
+  };
+
+  const AadharVerification = async () => {
+    try {
+      const validationError = validateInputs(DOB, KYCstate, adhaarNumber);
+      if (validationError) {
+        Alert.alert(validationError);
+        return;
+      }
+
+      setLoading(true);
+      const response = await fetch(`${BASE_URL}/kyc/generateOtp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id_number: adhaarNumber, isKYCVerified: KYCstate, dateOfBirth: DOB }),
+      });
+
+      const responseData = await response.json(createJsonReviver);
+      setIsBottomSheetVisible(true);
+
+      if (responseData.success) {
+        setAdhaarNumber('');
+        Alert.alert("Warning!", 'Please verify your otp');
+        setIsBottomSheetVisible(true);
+      } else {
+        setAdhaarNumber('');
+        // Alert.alert('Warning', responseData?.message);
+        navigation.navigate("ProfileSetupTwo");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert("Error", "Something went wrong!. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const VerifyOtp = async () => {
+    let responseData; // Declare the variable outside the try block
+
+    try {
+      if (adhaarOtp.length === 0) {
+        Alert.alert("Please enter valid otp");
+        setIsBottomSheetVisible(true);
+        return;
+      }
+      setLoading(true);
+      const response = await fetch(`${BASE_URL}/kyc/verifyOtp`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          client_id: "aadhaar_v2_RPBGjLuOgUfCbLAobkXo",
+          otp: adhaarOtp,
+          userId: userFromStorage?.id
+        }),
+      });
+      responseData = await response.json(createJsonReviver);; // Set the responseData within the try block
+
+      if (responseData.success) {
+        const updatedUser = { ...userFromStorage, isKYCVerified: true };
+        dispatch(saveUser(updatedUser));
+        setAdhaarOtp('');
+        setIsBottomSheetVisible(false);
+        Alert.alert("Your OTP is verified successfully");
+        navigation.navigate("Home");
+      } else {
+        Alert.alert("Warning!", responseData.message);
+        navigation.navigate("ProfileSetupTwo");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      Alert.alert(responseData?.message); // Use responseData here
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const autoFillOTP = (otp) => {
+    setAdhaarOtp(otp);
+    otpTextInputRef.current.focus();
+  };
+
+  const handleOTPReception = (receivedOTP) => {
+    setLoading(true);
+    autoFillOTP(receivedOTP);
+    VerifyOtp();
+    setLoading(false);
+  };
 
   return (
     <ImageBackground
@@ -68,7 +181,9 @@ const ProfileSetupTwo = ({ navigation }) => {
           styleRight={{ width: 49, height: 47, left: 20 }}
           sourceLeftOnPress={() => navigation.goBack()}
         />
+
         <View style={{ marginTop: 5, padding: 5, margin: 5 }}>
+
           <View style={{ flexDirection: "column", left: 10 }}>
             <Text style={{ fontWeight: "700", fontSize: 32 }}>KYC Details</Text>
             <Text style={{ fontWeight: "400", fontSize: 12 }}>
@@ -85,91 +200,69 @@ const ProfileSetupTwo = ({ navigation }) => {
 
           <View style={{ margin: 5, padding: 5 }}>
             <Text style={{ fontWeight: "400", fontSize: 16 }}>
-              Set your date of birth
+              Set your date of birth<Text style={{ color: 'red', fontWeight: '600', fontSize: 20 }}>*</Text>
             </Text>
-
             {/* datess */}
-            <View
-              style={{
-                flexDirection: "row",
-                justifyContent: "space-between",
-                alignItems: "center",
-                marginTop: 20,
-              }}
-            >
+            <View style={styles.container}>
               <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  width: 92,
-                  height: 53,
-                  borderRadius: 46,
-                  backgroundColor: "#1D1E22",
-                }}
+                style={styles.touchableOpacity}
+                onPress={showDatePicker}
               >
-                <Text
-                  style={{ fontWeight: "400", fontSize: 16, color: "#FFFFFF" }}
-                >
-                  DD
+                <Text style={styles.selectedDateText}>
+                  {selectedDate ? selectedDate.toDateString() : 'Select Date of Birth'}
                 </Text>
-                <Image
-                  source={require("../../assets/Iocns/DownIcon.png")}
-                  style={{ width: 11, height: 6 }}
-                />
               </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  width: 92,
-                  height: 53,
-                  borderRadius: 46,
-                  backgroundColor: "#1D1E22",
-                }}
-              >
-                <Text
-                  style={{ fontWeight: "400", fontSize: 16, color: "#FFFFFF" }}
-                >
-                  MM
-                </Text>
-                <Image
-                  source={require("../../assets/Iocns/DownIcon.png")}
-                  style={{ width: 11, height: 6 }}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-around",
-                  alignItems: "center",
-                  width: 117,
-                  height: 53,
-                  borderRadius: 46,
-                  backgroundColor: "#1D1E22",
-                }}
-              >
-                <Text
-                  style={{ fontWeight: "400", fontSize: 16, color: "#FFFFFF" }}
-                >
-                  YYYY
-                </Text>
-                <Image
-                  source={require("../../assets/Iocns/DownIcon.png")}
-                  style={{ width: 11, height: 6 }}
-                />
-              </TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleConfirm}
+                onCancel={hideDatePicker}
+              />
             </View>
+
             {/* datess */}
 
             <View style={{ marginTop: 20 }}>
               <Text
                 style={{ fontWeight: "400", fontSize: 16, color: "#1D1E22" }}
               >
-                Full Name (as per Bank KYC)
+                Full Name (as per Bank KYC)<Text style={{ color: 'red', fontWeight: '600', fontSize: 20 }}>*</Text>
               </Text>
-              <TouchableOpacity
+              <View
+                style={{
+                  marginTop: 10,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                  width: "100%",
+                  height: 53,
+                  backgroundColor: "#1D1E22",
+                  borderRadius: 46,
+                }}
+              >
+                <TextInput
+                  maxLength={30}
+                  placeholder="Enter your state..."
+                  placeholderTextColor={"white"}
+                  value={KYCstate}
+                  onChangeText={(text) => setKYCstate(text)}
+                  style={{
+                    height: "100%",
+                    width: "100%",
+                    paddingLeft: 15,
+                    fontWeight: "400",
+                    fontSize: 16,
+                    color: "#FFFFFF",
+                  }}
+                />
+                {/* <Image
+                    source={require("../../assets/Iocns/UserInput.png")}
+                    style={{ right: 40, width: 16, height: 16 }}
+                  /> */}
+              </View>
+
+              {/* if you need dropdown */}
+              {/* <TouchableOpacity
                 style={{
                   flexDirection: "row",
                   justifyContent: "space-between",
@@ -195,12 +288,12 @@ const ProfileSetupTwo = ({ navigation }) => {
                   source={require("../../assets/Iocns/DownIcon.png")}
                   style={{ width: 11, height: 6, right: 20 }}
                 />
-              </TouchableOpacity>
+              </TouchableOpacity> */}
               <View style={{ marginTop: 20, elevation: 5 }}>
                 <Text
                   style={{ fontWeight: "400", fontSize: 16, color: "#1D1E22" }}
                 >
-                  Enter your Aadhaar Number (12 Digits)
+                  Enter your Aadhaar Number (12 Digits)<Text style={{ color: 'red', fontWeight: '600', fontSize: 20 }}>*</Text>
                 </Text>
                 <View
                   style={{
@@ -215,10 +308,12 @@ const ProfileSetupTwo = ({ navigation }) => {
                   }}
                 >
                   <TextInput
-                    maxLength={11}
+                    maxLength={12}
                     keyboardType="numeric"
                     placeholder="Enter Aadhaar Number..."
                     placeholderTextColor={"white"}
+                    value={adhaarNumber}
+                    onChangeText={(text) => setAdhaarNumber(text)}
                     style={{
                       height: "100%",
                       width: "100%",
@@ -236,7 +331,8 @@ const ProfileSetupTwo = ({ navigation }) => {
               </View>
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate("CreateTeam")}
+              disabled={loading}
+              onPress={AadharVerification}
               style={{
                 marginTop: "10%",
                 padding: 10,
@@ -244,7 +340,7 @@ const ProfileSetupTwo = ({ navigation }) => {
                 flexDirection: "row",
                 width: 199,
                 height: 45,
-                backgroundColor: "#FF0F0F",
+                backgroundColor: loading ? 'grey' : "#FF0F0F",
                 borderRadius: 53,
               }}
             >
@@ -261,10 +357,11 @@ const ProfileSetupTwo = ({ navigation }) => {
                   letterSpacing: 5,
                 }}
               >
-                CONTINUE
+                {loading ? <ActivityIndicator size={"small"} color={'white'} /> : 'CONTINUE'}
               </Text>
             </TouchableOpacity>
-            <View style={{ marginTop: "10%" }}>
+
+            <View style={{ marginTop: "6%" }}>
               <Text
                 style={{ fontWeight: "400", fontSize: 17, color: "#1D1E22" }}
               >
@@ -317,6 +414,52 @@ const ProfileSetupTwo = ({ navigation }) => {
                     SEND EMAIL
                   </Text>
                 </TouchableOpacity>
+                <CustomBottomSheet isVisible={isBottomSheetVisible}
+                >
+                  <Text style={{ fontWeight: '600', color: 'black', fontSize: 18, alignSelf: 'center' }}>Enter otp</Text>
+                  <TextInput
+                    maxLength={16}
+                    keyboardType="numeric"
+                    placeholder="Verify OTP"
+                    placeholderTextColor={"white"}
+                    value={adhaarOtp}
+                    onChangeText={(text) => setAdhaarOtp(text)}
+                    ref={otpTextInputRef} // Attach the ref
+                    style={{
+                      height: '30%',
+                      borderRadius: 50,
+                      paddingLeft: 10,
+                      alignItems: 'center',
+                      backgroundColor: "#1D1E22",
+                      color: '#fff',
+                      elevation: 3,
+                      marginTop: '5%'
+                    }}
+                  />
+                  <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', alignItems: 'center', marginTop: '10%' }}>
+                    <TouchableOpacity
+                      disabled={loading}
+                      onPress={handleOTPReception}
+                      style={{
+                        elevation: 3,
+                        backgroundColor: loading ? 'grey' : 'green',
+                        width: '30%',
+                        height: 30,
+                        borderRadius: 50,
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                      }}
+                    >
+                      <Text style={{ fontSize: 11, color: '#fff', letterSpacing: 3 }}>
+                        {loading ? <ActivityIndicator size={"small"} color={'white'} /> : 'VERIFY'}
+                      </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity onPress={closeBottomSheet} style={{ elevation: 3, backgroundColor: 'red', width: '30%', height: 30, borderRadius: 50, alignItems: 'center', justifyContent: 'center' }}>
+                      <Text style={{ fontSize: 11, color: '#fff', letterSpacing: 3 }}>CLOSE</Text>
+                    </TouchableOpacity>
+                  </View>
+                </CustomBottomSheet>
               </View>
             </View>
           </View>
@@ -336,6 +479,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContent: {
     marginTop: 10,
+
   },
   container: {
     width: 92,
@@ -372,5 +516,23 @@ const styles = StyleSheet.create({
   dropdownText: {
     color: "#FFFFFF",
     fontSize: 16,
+  },
+
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10
+  },
+  touchableOpacity: {
+    width: '100%',
+    height: 53,
+    backgroundColor: '#1D1E22',
+    justifyContent: 'center',
+    paddingLeft: 15,
+    borderRadius: 46
+  },
+  selectedDateText: {
+    color: 'white',
   },
 });
