@@ -35,8 +35,10 @@ const Login = ({ navigation }) => {
   const sendVerification = () => {
     setIsLoading(true);
     const phoneProvider = new firebase.auth.PhoneAuthProvider();
+    const phone = selectedCountry.code + phoneNumber;
+
     phoneProvider
-      .verifyPhoneNumber(phoneNumber, recaptchaVerifier.current)
+      .verifyPhoneNumber(phone, recaptchaVerifier.current)
       .then((verificationId) => {
         setVerificationId(verificationId);
         setPhoneNumber("");
@@ -163,10 +165,9 @@ const Login = ({ navigation }) => {
                       flexDirection: "row",
                       alignItems: "center",
                     }}
-                    onPress={() => alert("Implement country picker here")}
                   >
                     <Image
-                      source={{ uri: selectedCountry.flag }}
+                      source={selectedCountry.flag}
                       style={styles.flagIcon}
                     />
                     <Text style={styles.countryCode}>
