@@ -110,7 +110,7 @@ const Home = ({ navigation }) => {
 
   const UpCommingMatches = async () => {
     try {
-      const apiUrl = `${BASE_URL}/matches?status=${MATCH_STATUS.STARTED}`;
+      const apiUrl = `${BASE_URL}/matches?status=${MATCH_STATUS.NOT_STARTED}`;
       const response = await fetch(apiUrl);
 
       if (!response.ok) {
