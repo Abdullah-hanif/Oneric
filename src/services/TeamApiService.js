@@ -25,7 +25,7 @@ class TeamApiService {
       }
     } catch (error) {
       return {
-        message: "Teams fetching failed",
+        message: "Something went wrong while fetching teams",
         data: [],
         error: true,
         success: false,
@@ -34,9 +34,26 @@ class TeamApiService {
     }
   };
 
-  static createTeam = async (players, userId, matchId, name) => {
+  static createTeam = async (
+    players,
+    userId,
+    matchId,
+    name,
+    captain,
+    viceCaptian
+  ) => {
     try {
-      const raw = JSON.stringify({ players, userId, matchId, name });
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        players: players,
+        userId: userId,
+        name: name,
+        matchId: matchId,
+        captain: captain,
+        viceCaptian: viceCaptian,
+      });
 
       const requestOptions = {
         method: "POST",
@@ -45,20 +62,20 @@ class TeamApiService {
       };
 
       const response = await fetch(`${BASE_URL}/teams`, requestOptions);
-
       const parsedResponse = await response.json();
 
       if (parsedResponse?.success) {
         return {
-          message: parsedResponse?.message || "Teams fetched successfully",
+          message: parsedResponse?.message || "Teams created successfully",
           data: parsedResponse?.createdData || [],
           error: true,
-          success: false,
+          success: true,
           errorDetails: JSON.stringify(parsedResponse),
         };
       } else {
         return {
-          message: "Teams fetching failed",
+          message:
+            "Something went wrong while creating a team (May the name already exists!)",
           data: [],
           error: true,
           success: false,
@@ -67,7 +84,8 @@ class TeamApiService {
       }
     } catch (error) {
       return {
-        message: "Teams fetching failed",
+        message:
+          "Something went wrong while creating a team (May the name already exists!)",
         data: [],
         error: true,
         success: false,
@@ -76,9 +94,19 @@ class TeamApiService {
     }
   };
 
-  static updateTeam = async (teamId, players, name) => {
+  static updateTeam = async (teamId, players, name, captain, viceCaptian) => {
     try {
-      const raw = JSON.stringify({ teamId, players, name });
+      const myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      const raw = JSON.stringify({
+        players: players,
+        userId: userId,
+        name: name,
+        matchId: matchId,
+        captain: captain,
+        viceCaptian: viceCaptian,
+      });
 
       const requestOptions = {
         method: "PUT",
@@ -86,14 +114,21 @@ class TeamApiService {
         body: raw,
       };
 
-      const response = await fetch(`${BASE_URL}/teams`, requestOptions);
-
+      const response = await fetch(`${BASE_URL}/teams/${teamId}`,requestOptions);
       const parsedResponse = await response.json();
 
       if (parsedResponse?.success) {
         return {
           message: parsedResponse?.message || "Teams updated successfully",
-          data: { teamId, players, name } || [],
+          data:
+            {
+              players: players,
+              userId: userId,
+              name: name,
+              matchId: matchId,
+              captain: captain,
+              viceCaptian: viceCaptian,
+            } || [],
           error: true,
           success: false,
           errorDetails: JSON.stringify(parsedResponse),

@@ -65,7 +65,8 @@ const JoinContest = ({ route, navigation }) => {
   const { matchId } = route.params;
 
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    // setIsModalVisible(!isModalVisible);
+    navigation.navigate("CreateTeam", { matchId })
   };
 
   useEffect(() => {

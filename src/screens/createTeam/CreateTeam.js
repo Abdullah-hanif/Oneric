@@ -133,12 +133,15 @@ const CreateTeam = ({ route, navigation }) => {
   const { matchId } = route.params;
 
   const handleTeamNumberSelect = (teamNumber) => {
+    if (teamNumber < 8) {
+      Alert.alert("Select atleast 8 players");
+      return;
+    }
     setSelectedTeamNumber(teamNumber);
   };
 
   const renderOption = (teamNumber) => {
     const isActive = selectedTeamNumber === teamNumber;
-
     return (
       <TouchableOpacity
         key={teamNumber}
@@ -181,7 +184,7 @@ const CreateTeam = ({ route, navigation }) => {
       role: role,
       captian: { top: "2X", lowerP: "11%" },
       viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
+      userImg: item?.logo || require("../../assets/Iocns/profile.png"),
     };
   });
 
@@ -194,8 +197,6 @@ const CreateTeam = ({ route, navigation }) => {
   const [selectedPlayers, setSelectedPlayers] = useState(
     initialSelectedPlayers
   ); // Store selected players by their card ID
-
-  console.log("selectedPlayers", selectedPlayers);
 
   const handlePlayerSelect = (cardId) => {
     setSelectedPlayers((prevState) => ({
@@ -221,8 +222,6 @@ const CreateTeam = ({ route, navigation }) => {
       const selected = selectedPlayers[item?.player?.key];
       return selected === true;
     });
-
-    console.log("allSelectedPlayers", allSelectedPlayers);
 
     if (allSelectedPlayers.length < 8) {
       Alert.alert(
@@ -256,7 +255,10 @@ const CreateTeam = ({ route, navigation }) => {
       return;
     }
 
-    navigation.navigate("Contest");
+    navigation.navigate("Contest", {
+      selectedPlayers: allSelectedPlayers,
+      selectedMatch: selectedMatch,
+    });
   };
 
   // PLAYERS AND ROLES WORK STARTS HERE
@@ -426,7 +428,7 @@ const CreateTeam = ({ route, navigation }) => {
                 <Text
                   style={{ fontWeight: "700", fontSize: 13, color: "#ffff" }}
                 >
-                  {selectedTeamNumber == null ? 0 : selectedTeamNumber}/11
+                  {totalSelectedPlayers || "0"}/11
                 </Text>
               </View>
             </View>

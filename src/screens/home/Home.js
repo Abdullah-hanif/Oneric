@@ -348,7 +348,7 @@ const Home = ({ navigation }) => {
                         require("../../assets/Iocns/FlagPlaceholder.png")
                       }
                       flagBteam={
-                        item?.teamA?.logo ||
+                        item?.teamB?.logo ||
                         require("../../assets/Iocns/FlagPlaceholder.png")
                       }
                       totalAmount={item?.winingPrice || "--"}
