@@ -5,13 +5,12 @@ class TeamApiService {
     try {
       const response = await fetch(`${BASE_URL}/teams?userId=${userId}`);
       const parsedResponse = await response.json();
-
-      if (parsedResponse?.data?.length !== 0) {
+      if (parsedResponse?.data) {
         return {
           message: parsedResponse?.message || "Teams fetched successfully",
-          data: parsedResponse,
-          error: true,
-          success: false,
+          data: parsedResponse?.data,
+          success: true,
+          error: false,
           errorDetails: JSON.stringify(parsedResponse),
         };
       } else {
@@ -66,7 +65,7 @@ class TeamApiService {
 
       if (parsedResponse?.success) {
         return {
-          message: parsedResponse?.message || "Teams created successfully",
+          message: parsedResponse?.message || "Team created successfully",
           data: parsedResponse?.createdData || [],
           error: true,
           success: true,
@@ -119,7 +118,7 @@ class TeamApiService {
 
       if (parsedResponse?.success) {
         return {
-          message: parsedResponse?.message || "Teams updated successfully",
+          message: parsedResponse?.message || "Team updated successfully",
           data:
             {
               players: players,

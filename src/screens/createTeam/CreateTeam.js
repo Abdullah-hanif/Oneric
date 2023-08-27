@@ -130,7 +130,7 @@ const CreateTeam = ({ route, navigation }) => {
   const [completeData, setCompleteData] = useState([]);
   const [selectedMatch, setSelectedMatch] = useState(null);
 
-  const { matchId } = route.params;
+  const { matchId, playersToBeEdited } = route.params;
 
   const handleTeamNumberSelect = (teamNumber) => {
     if (teamNumber < 8) {
@@ -270,6 +270,16 @@ const CreateTeam = ({ route, navigation }) => {
     });
     return unsubscribe;
   }, [matchId]);
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     if (playersToBeEdited) {
+  //       console.log("playersToBeEdited-----------",playersToBeEdited)
+  //       setSelectedPlayers(playersToBeEdited)
+  //     }
+  //   });
+  //   return unsubscribe;
+  // }, [playersToBeEdited]);
 
   const getAllPlayers = async (matchId) => {
     const response = await fetch(`${BASE_URL}/matches/${matchId}`);

@@ -277,6 +277,8 @@ const TeamTwo = ({ route, navigation }) => {
     if (response?.success) {
       setIsDialogVisible(false);
       setIsLoading(false);
+      Alert.alert("Success", response?.message || "Team created successfully");
+      navigation.navigate("My matches");
     } else {
       setIsLoading(false);
       Alert.alert("Error", response?.message || "Something went wrong");
