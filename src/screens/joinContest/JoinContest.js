@@ -65,7 +65,8 @@ const JoinContest = ({ route, navigation }) => {
   const { matchId } = route.params;
 
   const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
+    // setIsModalVisible(!isModalVisible);
+    navigation.navigate("CreateTeam", { matchId })
   };
 
   useEffect(() => {
@@ -79,8 +80,6 @@ const JoinContest = ({ route, navigation }) => {
 
   const getMatchById = async (id) => {
     const response = await MatchApiService.getMatchById(id);
-    console.log("selectedMatch", response?.data?.teamA);
-
     if (response?.data?.teamA && response?.data?.teamB) {
       setSelectedMatch(response?.data);
     }

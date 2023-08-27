@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
+  Alert,
   Image,
   ImageBackground,
   ScrollView,
@@ -11,20 +12,136 @@ import {
 import GlobalHeader from "../../components/GlobalHeader";
 import HorizontalTopList from "../../components/HorizontalTopList";
 import CreateTeamCard from "../../screenComponents/CreateTeamCard";
+import PlayersApiService from "../../services/PlayersApiService";
+import { BASE_URL } from "../../common/BaseUrl";
+import { ROLES } from "../../common/Constants";
+
+// const cardData = [
+//   {
+//     id: "1",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "2",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "3",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "4",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "5",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "6",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "7",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   {
+//     id: "8",
+//     teamName: "AUS",
+//     title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
+//     firstName: "David",
+//     LastName: "Green",
+//     captian: { top: "2X", lowerP: "11%" },
+//     viceCaptian: { top: "1.5X", lowerP: "6%" },
+//     userImg: require("../../assets/Images/CaptianUSerImg.png"),
+//   },
+//   // Add more card items here if needed
+// ];
+
+const ALL_ROLES = [
+  {
+    id: ROLES.ALL_ROUNDER,
+    title: "All Rounder",
+    key: ROLES.ALL_ROUNDER,
+  },
+  {
+    id: ROLES.BATSMAN,
+    title: "Batsman",
+    key: ROLES.BATSMAN,
+  },
+  {
+    id: ROLES.BOWLER,
+    title: "Bowler",
+    key: ROLES.BOWLER,
+  },
+  {
+    id: ROLES.KEEPER,
+    title: "Wicket Keeper",
+    key: ROLES.KEEPER,
+  },
+];
 
 const CreateTeam = ({ route, navigation }) => {
   const teamSize = 11;
   const [selectedTeamNumber, setSelectedTeamNumber] = useState(null);
-  const [activeItemId, setActiveItemId] = useState(null);
-  const { matchId } = route.params;
+  const [activeItemId, setActiveItemId] = useState(ROLES.ALL_ROUNDER);
+  const [completeData, setCompleteData] = useState([]);
+  const [selectedMatch, setSelectedMatch] = useState(null);
+
+  const { matchId, playersToBeEdited } = route.params;
 
   const handleTeamNumberSelect = (teamNumber) => {
+    if (teamNumber < 8) {
+      Alert.alert("Select atleast 8 players");
+      return;
+    }
     setSelectedTeamNumber(teamNumber);
   };
 
   const renderOption = (teamNumber) => {
     const isActive = selectedTeamNumber === teamNumber;
-
     return (
       <TouchableOpacity
         key={teamNumber}
@@ -50,89 +167,27 @@ const CreateTeam = ({ route, navigation }) => {
     );
   };
 
-  const cardData = [
-    {
-      id: "1",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
+  const players =
+    completeData.find((item) => item.key === activeItemId)?.data || [];
+
+  const cardData = players.map((item) => {
+    const firstName = item?.player?.legal_name.split(" ")[0] || "--";
+    const lastName = item?.player?.legal_name.split(" ")[1] || "--";
+    const teamTitle = item?.player?.nationality?.code || "--";
+    const role = item?.player?.roles[0] || "--";
+    return {
+      id: item?.player?.key || "--",
+      teamName: teamTitle,
+      title: { team: teamTitle, scoreTotal: "00", scoreActual: "00" },
+      firstName: firstName,
+      LastName: lastName,
+      role: role,
       captian: { top: "2X", lowerP: "11%" },
       viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "2",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "3",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "4",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "5",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "6",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "7",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    {
-      id: "8",
-      teamName: "AUS",
-      title: { team: "RHB", scoreTotal: "804", scoreActual: "15" },
-      firstName: "David",
-      LastName: "Green",
-      captian: { top: "2X", lowerP: "11%" },
-      viceCaptian: { top: "1.5X", lowerP: "6%" },
-      userImg: require("../../assets/Images/CaptianUSerImg.png"),
-    },
-    // Add more card items here if needed
-  ];
+      userImg: item?.logo || require("../../assets/Iocns/profile.png"),
+    };
+  });
+
   // Initialize selectedPlayers state with all values as false
   const initialSelectedPlayers = cardData.reduce((acc, item) => {
     acc[item.id] = false;
@@ -150,50 +205,138 @@ const CreateTeam = ({ route, navigation }) => {
     }));
   };
 
-  // for dummy data
-  const data = [
-    {
-      id: "1",
-      title: "League",
-      titleImage: {
-        activeImg: require("../../assets/Iocns/BatImgActive.png"),
-        nonActiveImg: require("../../assets/Iocns/BatImg.png"),
-      },
-    },
-    {
-      id: "2",
-      title: "One Day International",
-      titleImage: {
-        activeImg: require("../../assets/Iocns/BatImgActive.png"),
-        nonActiveImg: require("../../assets/Iocns/BatImg.png"),
-      },
-    },
-    {
-      id: "3",
-      title: "Test matches",
-      titleImage: {
-        activeImg: require("../../assets/Iocns/BatImgActive.png"),
-        nonActiveImg: require("../../assets/Iocns/BatImg.png"),
-      },
-    },
-    {
-      id: "4",
-      title: "IPL",
-      titleImage: {
-        activeImg: require("../../assets/Iocns/BatImgActive.png"),
-        nonActiveImg: require("../../assets/Iocns/BatImg.png"),
-      },
-    },
-    {
-      id: "5",
-      title: "World cup",
-      titleImage: {
-        activeImg: require("../../assets/Iocns/BatImgActive.png"),
-        nonActiveImg: require("../../assets/Iocns/BatImg.png"),
-      },
-    },
-    // Add more items here if needed
-  ];
+  // HANDLE PREVIEW WITH VALIDATION
+  const handlePreview = () => {
+    // SELECTION OF ATLEAT 8 PLAYERS
+    // ATLEAST ONE WICKET KEEPER AND THREE BOWLER AND THREE BATSMAN AND ONE ALLROUNDER
+
+    const allPlayers = Object.values(selectedMatch?.players)?.map((item) => {
+      return {
+        ...item,
+        selected: selectedPlayers[item?.player?.key],
+        role: item?.player?.roles[0] || "--",
+      };
+    });
+
+    const allSelectedPlayers = allPlayers.filter((item) => {
+      const selected = selectedPlayers[item?.player?.key];
+      return selected === true;
+    });
+
+    if (allSelectedPlayers.length < 8) {
+      Alert.alert(
+        "Select atleast 8 players includes 1 keeper 3 bowlers 3 batsman and 1 all rounder"
+      );
+      return;
+    }
+
+    const selectedPlayersRolesCount = allSelectedPlayers.reduce((acc, item) => {
+      acc[item?.role] = (acc[item?.role] || 0) + 1;
+      return acc;
+    }, {});
+
+    if (selectedPlayersRolesCount[ROLES.BOWLER] < 3) {
+      Alert.alert("Please select atleast 3 bowlers before proceeding");
+      return;
+    }
+
+    if (selectedPlayersRolesCount[ROLES.BATSMAN] < 3) {
+      Alert.alert("Please select atleast 3 batsman before proceeding");
+      return;
+    }
+
+    if (selectedPlayersRolesCount[ROLES.ALL_ROUNDER] < 1) {
+      Alert.alert("Please select atleast 1 all rounder before proceeding");
+      return;
+    }
+
+    if (selectedPlayersRolesCount[ROLES.KEEPER] < 1) {
+      Alert.alert("Please select atleast 1 wicket keeper before proceeding");
+      return;
+    }
+
+    navigation.navigate("Contest", {
+      selectedPlayers: allSelectedPlayers,
+      selectedMatch: selectedMatch,
+    });
+  };
+
+  // PLAYERS AND ROLES WORK STARTS HERE
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      if (matchId) {
+        getAllPlayers(matchId);
+      }
+    });
+    return unsubscribe;
+  }, [matchId]);
+
+  // useEffect(() => {
+  //   const unsubscribe = navigation.addListener("focus", () => {
+  //     if (playersToBeEdited) {
+  //       console.log("playersToBeEdited-----------",playersToBeEdited)
+  //       setSelectedPlayers(playersToBeEdited)
+  //     }
+  //   });
+  //   return unsubscribe;
+  // }, [playersToBeEdited]);
+
+  const getAllPlayers = async (matchId) => {
+    const response = await fetch(`${BASE_URL}/matches/${matchId}`);
+    const parsedResponse = await response.json();
+
+    if (parsedResponse?.players) {
+      // GROUP ROLE WISE PLAYERS
+      const players = parsedResponse?.players;
+      const finalData = await Promise.all([
+        PlayersApiService.getPlayersByType(players, "bowler"),
+        PlayersApiService.getPlayersByType(players, "batsman"),
+        PlayersApiService.getPlayersByType(players, "all_rounder"),
+        PlayersApiService.getPlayersByType(players, "keeper"),
+      ]);
+
+      const total = finalData.reduce((acc, item) => {
+        return acc + item.length;
+      }, 0);
+
+      setCompleteData([
+        {
+          key: ROLES.BOWLER,
+          roleName: "Bowler",
+          data: finalData[0],
+          totalPlayers: total,
+        },
+        {
+          key: ROLES.BATSMAN,
+          roleName: "Batsman",
+          data: finalData[1],
+          totalPlayers: total,
+        },
+        {
+          key: ROLES.ALL_ROUNDER,
+          roleName: "All Rounder",
+          data: finalData[2],
+          totalPlayers: total,
+        },
+        {
+          key: ROLES.KEEPER,
+          roleName: "Wicket Keeper",
+          data: finalData[3],
+          totalPlayers: total,
+        },
+      ]);
+
+      setSelectedMatch(parsedResponse);
+    }
+  };
+
+  const totalSelectedPlayers =
+    Object.values(selectedPlayers)?.filter((item) => item === true)?.length ||
+    0;
+  const totalPlayers =
+    (completeData &&
+      completeData.find((item) => item.key === activeItemId)?.totalPlayers) ||
+    0;
 
   return (
     <ImageBackground
@@ -237,7 +380,9 @@ const CreateTeam = ({ route, navigation }) => {
       >
         <TouchableOpacity
           style={styles.buttonForAbsoulute}
-          onPress={() => navigation.navigate("Contest")}
+          onPress={() => {
+            handlePreview();
+          }}
         >
           <Text
             style={{
@@ -293,7 +438,7 @@ const CreateTeam = ({ route, navigation }) => {
                 <Text
                   style={{ fontWeight: "700", fontSize: 13, color: "#ffff" }}
                 >
-                  {selectedTeamNumber == null ? 0 : selectedTeamNumber}/11
+                  {totalSelectedPlayers || "0"}/11
                 </Text>
               </View>
             </View>
@@ -307,7 +452,16 @@ const CreateTeam = ({ route, navigation }) => {
               }}
             >
               <View style={{ alignItems: "center" }}>
-                <Image source={require("../../assets/Images/AUSflag.png")} />
+                <Image
+                  source={require("../../assets/Iocns/FlagPlaceholder.png")}
+                  style={{
+                    width: 23,
+                    height: 16,
+                    borderRadius: 100,
+                    marginRight: 5,
+                  }}
+                  resizeMode="contain"
+                />
                 <Text style={{ fontWeight: "700", fontSize: 11 }}>0/0</Text>
               </View>
               <Image
@@ -316,8 +470,9 @@ const CreateTeam = ({ route, navigation }) => {
               />
               <View style={{ alignItems: "center" }}>
                 <Image
-                  source={require("../../assets/Images/ENGlflag.png")}
-                  style={{}}
+                  source={require("../../assets/Iocns/FlagPlaceholder.png")}
+                  style={{ width: 23, height: 16, borderRadius: 100 }}
+                  resizeMode="contain"
                 />
                 <Text style={{ fontWeight: "700", fontSize: 11 }}>0/0</Text>
               </View>
@@ -325,7 +480,7 @@ const CreateTeam = ({ route, navigation }) => {
           </View>
           <View style={{ left: 10 }}>
             <Text style={{ fontWeight: "400", fontSize: 12 }}>
-              Max 7 Players from a Team
+              Min 8 Players from a Team
             </Text>
           </View>
           <View
@@ -350,7 +505,7 @@ const CreateTeam = ({ route, navigation }) => {
             showsHorizontalScrollIndicator={false}
             style={{ marginTop: 15 }}
           >
-            {data.map((item) => (
+            {ALL_ROLES.map((item) => (
               <HorizontalTopList
                 key={item.id}
                 item={item}
@@ -370,22 +525,22 @@ const CreateTeam = ({ route, navigation }) => {
             }}
           >
             <Text style={{ color: "#7D7D7D", fontWeight: "400", fontSize: 16 }}>
-              Select{" "}
+              Selected{" "}
               <Text style={{ color: "black", fontWeight: "400", fontSize: 16 }}>
-                Batter (3-6)
+                ({totalSelectedPlayers}) out of ({totalPlayers}) Players
               </Text>
             </Text>
             <TouchableOpacity style={{ right: 15 }}>
-              <Image
+              {/* <Image
                 source={require("../../assets/Iocns/FilterIcon.png")}
                 style={{ width: 15, height: 16 }}
-              />
+              /> */}
             </TouchableOpacity>
           </View>
 
-          {cardData.map((item, index) => (
+          {cardData?.map((item, index) => (
             <CreateTeamCard
-              key={item.id}
+              key={item.key}
               teamName={item.teamName}
               firstName={item.firstName}
               LastName={item.LastName}
